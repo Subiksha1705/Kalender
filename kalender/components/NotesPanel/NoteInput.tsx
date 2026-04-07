@@ -45,7 +45,8 @@ export function NoteInput({
     const reader = new FileReader();
     reader.onload = () => {
       if (typeof reader.result === "string") {
-        setAttachments((prev) => [...prev, { name: file.name, type: file.type, data: reader.result }]);
+        const data = reader.result as string;
+        setAttachments((prev) => [...prev, { name: file.name, type: file.type, data }]);
       }
     };
     reader.readAsDataURL(file);
