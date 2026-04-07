@@ -14,6 +14,7 @@ export function DateGrid({
   animating,
   range,
   country,
+  onDateDoubleClick,
 }: {
   year: number;
   month: number;
@@ -22,6 +23,7 @@ export function DateGrid({
   animating: boolean;
   range: ReturnTypeUseRange;
   country: CountryCode;
+  onDateDoubleClick: (date: Date) => void;
 }) {
   const next = direction
     ? direction === "right"
@@ -52,6 +54,7 @@ export function DateGrid({
             onMouseEnter={range.handleDayMouseEnter}
             onMouseUp={range.handleDayMouseUp}
             onClick={range.handleDayClick}
+            onDoubleClick={onDateDoubleClick}
             country={country}
           />
         );

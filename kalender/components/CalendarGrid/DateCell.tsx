@@ -13,6 +13,7 @@ export function DateCell({
   onMouseEnter,
   onMouseUp,
   onClick,
+  onDoubleClick,
   country,
 }: {
   day: number | null;
@@ -22,6 +23,7 @@ export function DateCell({
   onMouseEnter: (date: Date) => void;
   onMouseUp: () => void;
   onClick: (date: Date) => void;
+  onDoubleClick: (date: Date) => void;
   country: CountryCode;
 }) {
   if (!day || !date) {
@@ -57,6 +59,7 @@ export function DateCell({
       onMouseEnter={() => onMouseEnter(date)}
       onMouseUp={onMouseUp}
       onClick={() => onClick(date)}
+      onDoubleClick={() => onDoubleClick(date)}
     >
       {day}
     </div>

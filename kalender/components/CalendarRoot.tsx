@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useCalendar } from "@/hooks/useCalendar";
 import { useCountry } from "@/hooks/useCountry";
 import { useNavigation } from "@/hooks/useNavigation";
@@ -11,6 +11,7 @@ import { formatDateKey } from "@/utils/calendar";
 import { HeroPanel } from "@/components/HeroPanel/HeroPanel";
 import { CalendarGrid } from "@/components/CalendarGrid/CalendarGrid";
 import { NotesPanel } from "@/components/NotesPanel/NotesPanel";
+import { TodayCard } from "./TodayPanel/TodayCard";
 
 export function CalendarRoot() {
   const { country, setCountry } = useCountry();
@@ -20,12 +21,25 @@ export function CalendarRoot() {
   const notesStore = useNotes();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [notesOpen, setNotesOpen] = useState(false);
+  const [showTodayView, setShowTodayView] = useState(false);
+  const singleClickTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useTheme(month, country);
 
   const handleDateClick = (date: Date) => {
+    if (singleClickTimer.current) clearTimeout(singleClickTimer.current);
+    singleClickTimer.current = setTimeout(() => {
+      setSelectedDate(date);
+      setNotesOpen(false);
+      setShowTodayView(true);
+    }, 220);
+  };
+
+  const handleDateDoubleClick = (date: Date) => {
+    if (singleClickTimer.current) clearTimeout(singleClickTimer.current);
     setSelectedDate(date);
     setNotesOpen(true);
+    setShowTodayView(true);
   };
 
   const range = useRangeSelect(country, handleDateClick);
@@ -49,31 +63,45 @@ export function CalendarRoot() {
           notes={notesStore.notes}
         />
         <div className={`panel calendar-panel ${notesOpen ? "with-notes" : ""}`}>
-          <CalendarGrid
-            year={year}
-            month={month}
-            monthGrid={monthGrid}
-            onYearChange={setYear}
-            onMonthChange={setMonth}
-            goNext={goNext}
-            goPrev={goPrev}
-            direction={direction}
-            animating={animating}
-            viewMode={navigation.viewMode}
-            goToYearView={navigation.goToYearView}
-            goToMonthView={navigation.goToMonthView}
-            goToDateView={navigation.goToDateView}
-            selectedYear={navigation.selectedYear}
-            setSelectedYear={navigation.setSelectedYear}
-            decade={navigation.decade}
-            goNextDecade={navigation.goNextDecade}
-            goPrevDecade={navigation.goPrevDecade}
-            range={range}
-            country={country}
-          />
-          <button className="bottom-sheet-toggle" onClick={() => setNotesOpen(true)}>
-            📝 Notes
-          </button>
+          {showTodayView ? (
+            <TodayCard
+              date={selectedDate ?? new Date()}
+              notes={notesStore.notes}
+              onMonthClick={() => {
+                setShowTodayView(false);
+                navigation.goToDateView(year);
+              }}
+            />
+          ) : (
+            <>
+              <CalendarGrid
+                year={year}
+                month={month}
+                monthGrid={monthGrid}
+                onYearChange={setYear}
+                onMonthChange={setMonth}
+                goNext={goNext}
+                goPrev={goPrev}
+                direction={direction}
+                animating={animating}
+                viewMode={navigation.viewMode}
+                goToYearView={navigation.goToYearView}
+                goToMonthView={navigation.goToMonthView}
+                goToDateView={navigation.goToDateView}
+                selectedYear={navigation.selectedYear}
+                setSelectedYear={navigation.setSelectedYear}
+                decade={navigation.decade}
+                goNextDecade={navigation.goNextDecade}
+                goPrevDecade={navigation.goPrevDecade}
+                range={range}
+                country={country}
+                onDateDoubleClick={handleDateDoubleClick}
+              />
+              <button className="bottom-sheet-toggle" onClick={() => setNotesOpen(true)}>
+                📝 Notes
+              </button>
+            </>
+          )}
         </div>
         <NotesPanel
           open={notesOpen}

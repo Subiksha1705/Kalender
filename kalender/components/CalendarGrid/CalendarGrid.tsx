@@ -28,6 +28,7 @@ export function CalendarGrid({
   goPrevDecade,
   range,
   country,
+  onDateDoubleClick,
 }: {
   year: number;
   month: number;
@@ -49,6 +50,7 @@ export function CalendarGrid({
   goPrevDecade: () => void;
   range: ReturnTypeUseRange;
   country: CountryCode;
+  onDateDoubleClick: (date: Date) => void;
 }) {
   if (viewMode === "year") {
     return (
@@ -108,6 +110,7 @@ export function CalendarGrid({
         animating={animating}
         range={range}
         country={country}
+        onDateDoubleClick={onDateDoubleClick}
       />
     </div>
   );

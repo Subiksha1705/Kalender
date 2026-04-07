@@ -6,12 +6,17 @@
   --cal-accent: #7c3aed;
   --cal-flag-a: #ff9933;
   --cal-flag-b: #138808;
+  --hero-text: #5a3e2b;
+  --hero-muted: #9c7f6a;
+  --hero-chip-bg: rgba(255, 255, 255, 0.35);
+  --hero-chip-border: rgba(255, 255, 255, 0.55);
+  --hero-divider: rgba(90, 62, 43, 0.2);
 
   --hero-width: 28%;
   --calendar-width: 44%;
   --notes-width: 28%;
   --panel-radius: 20px;
-  --cell-size: 44px;
+  --cell-size: 56px;
 
   --font-display: "Fraunces", serif;
   --font-body: "SF Pro Text", "Inter", "Segoe UI", system-ui, sans-serif;
@@ -60,6 +65,7 @@ a {
   padding: 16px;
   box-shadow: 0 30px 80px rgba(15, 23, 42, 0.12);
   backdrop-filter: blur(16px);
+  overflow: visible;
 }
 
 .panel {
@@ -72,30 +78,64 @@ a {
 
 .hero-panel {
   flex: 0 0 var(--hero-width);
-  color: white;
+  color: var(--hero-text);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  background: var(--cal-surface);
+  overflow: hidden;
+  position: relative;
+  z-index: 2;
+  isolation: isolate;
 }
 
 .hero-bg {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse at 20% 30%, var(--cal-primary) 0%, transparent 60%),
-    radial-gradient(ellipse at 80% 70%, var(--cal-surface) 0%, transparent 60%);
+    radial-gradient(ellipse at 20% 30%, color-mix(in srgb, var(--cal-primary) 80%, white) 0%, transparent 65%),
+    radial-gradient(ellipse at 80% 70%, color-mix(in srgb, var(--cal-surface) 80%, white) 0%, transparent 65%);
   background-size: 200% 200%;
   animation: meshDrift 12s ease infinite;
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+  opacity: 0.95;
+  filter: saturate(1.2);
+  z-index: 0;
+}
+
+.hero-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(140deg, color-mix(in srgb, var(--cal-primary) 70%, white), transparent);
+  clip-path: polygon(0 0, 92% 0, 0 92%);
+  opacity: 0.85;
+  z-index: 1;
+}
+
+.hero-panel::after {
+  content: "";
+  position: absolute;
+  top: 4%;
+  bottom: 4%;
+  right: 4%;
+  left: 8%;
+  background: linear-gradient(140deg, color-mix(in srgb, var(--cal-primary) 65%, white), transparent);
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+  opacity: 0.5;
+  z-index: 1;
+  pointer-events: none;
 }
 
 .hero-content {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   height: 100%;
   display: flex;
   flex-direction: column;
   gap: 18px;
   padding: 18px;
+  color: var(--hero-text);
 }
 
 .hero-top {
@@ -104,11 +144,11 @@ a {
 }
 
 .country-dropdown {
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: var(--hero-chip-bg);
+  border: 1px solid var(--hero-chip-border);
   border-radius: 999px;
   padding: 6px 14px 6px 10px;
-  color: white;
+  color: var(--hero-text);
   font-size: 13px;
   cursor: pointer;
   backdrop-filter: blur(8px);
@@ -116,7 +156,7 @@ a {
 }
 
 .country-dropdown:hover {
-  background: rgba(255, 255, 255, 0.35);
+  background: color-mix(in srgb, var(--hero-chip-bg) 70%, white);
 }
 
 .hero-scene {
@@ -124,13 +164,13 @@ a {
   height: 240px;
   border-radius: 16px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid color-mix(in srgb, var(--hero-text) 20%, transparent);
+  background: color-mix(in srgb, var(--cal-surface) 70%, transparent);
 }
 
 .hero-divider {
   height: 1px;
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--hero-divider);
   margin: 8px 0;
 }
 
@@ -143,27 +183,28 @@ a {
 .hero-day {
   font-size: 16px;
   letter-spacing: 0.02em;
-  opacity: 0.9;
+  color: var(--hero-muted);
 }
 
 .hero-day-number {
   font-family: var(--font-display);
   font-size: 72px;
   line-height: 0.9;
+  color: var(--hero-text);
 }
 
 .hero-month-year {
   font-size: 13px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  opacity: 0.85;
+  color: var(--hero-muted);
 }
 
 .events-label {
   font-size: 12px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  opacity: 0.75;
+  color: var(--hero-muted);
 }
 
 .events-list {
@@ -181,7 +222,11 @@ a {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--hero-text);
+}
+
+.hero-panel .text-sm {
+  color: var(--hero-muted);
 }
 
 .event-dot {
@@ -196,9 +241,11 @@ a {
   background: white;
   display: flex;
   flex-direction: column;
-  padding: 18px;
+  padding: 28px;
   min-width: 0;
   transition: flex 320ms cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 1;
 }
 
 .calendar-panel.with-notes {
@@ -253,8 +300,8 @@ a {
 .day-headers {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 6px;
-  margin-bottom: 8px;
+  gap: 12px;
+  margin-bottom: 16px;
   text-transform: uppercase;
   font-size: 11px;
   letter-spacing: 0.16em;
@@ -276,7 +323,7 @@ a {
 .date-grid {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 6px;
+  gap: 12px;
 }
 
 .date-cell {
