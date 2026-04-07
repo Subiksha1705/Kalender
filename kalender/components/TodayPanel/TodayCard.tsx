@@ -33,7 +33,7 @@ export function TodayCard({
   const todaysNotes = notes.filter((n) => n.dateKey === dateKey).slice(0, 3);
 
   return (
-    <div className="today-card">
+    <div className="today-card grid grid-cols-1 gap-6 md:grid-cols-2">
       <div className="today-left">
         <div className="today-day">{dayNames[date.getDay()]}</div>
         <div className="today-date">{date.getDate()}</div>

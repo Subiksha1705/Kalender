@@ -53,8 +53,8 @@ export function CalendarRoot() {
   const closeNotes = () => setNotesOpen(false);
 
   return (
-    <div className="page">
-      <div className="calendar-shell">
+    <div className="page flex min-h-screen w-full items-stretch justify-center p-3 sm:p-5">
+      <div className="calendar-shell flex w-full flex-col items-stretch gap-3 overflow-auto sm:gap-4 lg:flex-row lg:gap-4 lg:overflow-visible">
         <HeroPanel
           country={country}
           onCountryChange={setCountry}
@@ -62,7 +62,9 @@ export function CalendarRoot() {
           month={month}
           notes={notesStore.notes}
         />
-        <div className={`panel calendar-panel ${notesOpen ? "with-notes" : ""}`}>
+        <div
+          className={`panel calendar-panel ${notesOpen ? "with-notes" : ""} order-2 min-h-[520px] px-4 py-4 sm:min-h-[560px] sm:px-6 sm:py-6 lg:order-none lg:min-h-0 lg:px-9 lg:py-9`}
+        >
           {showTodayView ? (
             <TodayCard
               date={selectedDate ?? new Date()}
@@ -97,7 +99,7 @@ export function CalendarRoot() {
                 country={country}
                 onDateDoubleClick={handleDateDoubleClick}
               />
-              <button className="bottom-sheet-toggle" onClick={() => setNotesOpen(true)}>
+              <button className="bottom-sheet-toggle lg:hidden" onClick={() => setNotesOpen(true)}>
                 📝 Notes
               </button>
             </>

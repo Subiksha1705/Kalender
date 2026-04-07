@@ -38,7 +38,7 @@ export function DateGrid({
   const incomingGrid = direction ? getMonthGrid(next.year, next.month) : monthGrid;
 
   const renderGrid = (grid: (number | null)[][], targetYear: number, targetMonth: number) => (
-    <div className="date-grid">
+    <div className="date-grid gap-2 sm:gap-3 md:gap-4">
       {grid.flat().map((day, idx) => {
         const row = Math.floor(idx / 7);
         const col = idx % 7;

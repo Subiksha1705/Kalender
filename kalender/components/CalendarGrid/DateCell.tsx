@@ -31,7 +31,7 @@ export function DateCell({
   }
 
   const holiday = getHoliday(country, formatDateKey(date));
-  const className = `date-cell ${
+  const className = `date-cell text-xs sm:text-sm md:text-base ${
     state === "today"
       ? "today"
       : state === "selected-start"

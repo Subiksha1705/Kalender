@@ -33,16 +33,26 @@ export function CalendarHeader({
   disabled: boolean;
 }) {
   return (
-    <div className="calendar-header">
-      <button className="nav-button" aria-label="Go to previous month" onClick={onPrev} disabled={disabled}>
+    <div className="calendar-header flex items-center justify-between gap-3 sm:gap-4">
+      <button
+        className="nav-button shrink-0"
+        aria-label="Go to previous month"
+        onClick={onPrev}
+        disabled={disabled}
+      >
         ←
       </button>
-      <div className="calendar-title">
+      <div className="calendar-title text-sm font-semibold sm:text-base md:text-lg">
         <button onClick={onMonthClick}>{monthNames[month]}</button>
         <span>·</span>
         <button onClick={onYearClick}>{year}</button>
       </div>
-      <button className="nav-button" aria-label="Go to next month" onClick={onNext} disabled={disabled}>
+      <button
+        className="nav-button shrink-0"
+        aria-label="Go to next month"
+        onClick={onNext}
+        disabled={disabled}
+      >
         →
       </button>
     </div>

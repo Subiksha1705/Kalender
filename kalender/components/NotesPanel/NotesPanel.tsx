@@ -29,7 +29,9 @@ export function NotesPanel({
     : "Select a date";
 
   return (
-    <aside className={`panel notes-panel ${open ? "open" : ""}`}>
+    <aside
+      className={`panel notes-panel ${open ? "open translate-y-0" : "translate-y-full lg:translate-y-0"} fixed left-0 right-0 bottom-0 z-40 w-full max-h-[80vh] overflow-y-auto rounded-t-[20px] lg:static lg:z-auto lg:w-[var(--notes-width)] lg:max-h-none lg:rounded-[var(--panel-radius)]`}
+    >
       <div className="notes-header">
         <span>📅 {formatted}</span>
         <button className="notes-close" onClick={onClose} aria-label="Close notes panel">
