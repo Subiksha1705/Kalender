@@ -156,11 +156,11 @@ export default function EventPanel({
                           key={c}
                           type="button"
                           onClick={() => setEditingColor(c)}
-                          className="h-4 w-4 rounded-full"
+                          className={`h-4 w-4 rounded-full transition ${
+                            c === editingColor ? "scale-110 shadow-[0_3px_8px_rgba(0,0,0,0.25)]" : ""
+                          }`}
                           style={{
                             background: c,
-                            outline: c === editingColor ? "2px solid #333" : "none",
-                            outlineOffset: 2,
                           }}
                           aria-label={`Pick color ${c}`}
                         />
@@ -256,11 +256,11 @@ export default function EventPanel({
                   key={c}
                   type="button"
                   onClick={() => setColor(c)}
-                  className="h-4 w-4 rounded-full"
+                  className={`h-4 w-4 rounded-full transition ${
+                    c === color ? "scale-110 shadow-[0_3px_8px_rgba(0,0,0,0.25)]" : ""
+                  }`}
                   style={{
                     background: c,
-                    outline: c === color ? "2px solid #333" : "none",
-                    outlineOffset: 2,
                   }}
                   aria-label={`Pick color ${c}`}
                 />

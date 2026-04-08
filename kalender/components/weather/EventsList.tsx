@@ -107,10 +107,11 @@ export default function EventsList({ selectedDate }: EventsListProps) {
                         key={c}
                         type="button"
                         onClick={() => setEditingColor(c)}
-                        className="h-5 w-5 rounded-full"
+                        className={`h-5 w-5 rounded-full transition ${
+                          c === editingColor ? "scale-110 shadow-[0_3px_8px_rgba(0,0,0,0.25)]" : ""
+                        }`}
                         style={{
                           background: c,
-                          outline: c === editingColor ? "2px solid #5A3E2B" : "none",
                         }}
                       />
                     ))}
@@ -204,10 +205,11 @@ export default function EventsList({ selectedDate }: EventsListProps) {
                 key={c}
                 type="button"
                 onClick={() => setSelectedColor(c)}
-                className="h-5 w-5 rounded-full"
+                className={`h-5 w-5 rounded-full transition ${
+                  c === selectedColor ? "scale-110 shadow-[0_3px_8px_rgba(0,0,0,0.25)]" : ""
+                }`}
                 style={{
                   background: c,
-                  outline: c === selectedColor ? "2px solid #5A3E2B" : "none",
                 }}
               />
             ))}

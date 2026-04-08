@@ -34,6 +34,14 @@ export default function WeatherCard({ season }: WeatherCardProps) {
     [selectedMonth]
   );
 
+  const clampDateToMonth = (base: Date, target: Date) => {
+    const day = base.getDate();
+    const year = target.getFullYear();
+    const month = target.getMonth();
+    const lastDay = new Date(year, month + 1, 0).getDate();
+    return new Date(year, month, Math.min(day, lastDay));
+  };
+
   const handleNavigate = () => {
     router.push("/calendar");
   };
@@ -56,12 +64,14 @@ export default function WeatherCard({ season }: WeatherCardProps) {
     const next = new Date(selectedMonth);
     next.setMonth(next.getMonth() - 1);
     setSelectedMonth(next);
+    setSelectedDate((current) => clampDateToMonth(current, next));
   };
 
   const goToNextMonth = () => {
     const next = new Date(selectedMonth);
     next.setMonth(next.getMonth() + 1);
     setSelectedMonth(next);
+    setSelectedDate((current) => clampDateToMonth(current, next));
   };
 
   return (
@@ -69,7 +79,7 @@ export default function WeatherCard({ season }: WeatherCardProps) {
       <div className="mx-auto flex w-full max-w-none flex-1 flex-col gap-8">
         <div className="grid w-full grid-cols-[1fr_auto] items-center gap-4 lg:grid-cols-[minmax(240px,1fr)_minmax(0,3fr)]">
           <div className="flex items-center justify-start">
-            <DayNav onPrev={goToPrevDay} onNext={goToNextDay} onLabelClick={handleNavigate} />
+            <DayNav onPrev={goToPrevDay} onNext={goToNextDay} />
           </div>
           <div className="flex items-center justify-end lg:justify-start">
             <MonthNav

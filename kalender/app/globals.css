@@ -890,3 +890,33 @@ a {
 .cal-view-animate {
   animation: calFadeUp 220ms ease both;
 }
+
+@keyframes flowPanelIn {
+  from {
+    opacity: 0;
+    transform: translateX(40px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes flowPanelOut {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(40px) scale(1.02);
+  }
+}
+
+.event-panel-enter {
+  animation: flowPanelIn 320ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+.event-panel-exit {
+  animation: flowPanelOut 320ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}

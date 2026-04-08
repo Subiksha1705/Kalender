@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 const COLORS = ["#c87941", "#e8a838", "#4a9b6f", "#4a7fb5"];
 
@@ -19,11 +20,16 @@ export function RangeEventModal({ range, onSave, onClose }: RangeEventModalProps
   const [title, setTitle] = useState("");
   const [time, setTime] = useState("");
   const [color, setColor] = useState(COLORS[0]);
+  const [mounted, setMounted] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     const t = setTimeout(() => inputRef.current?.focus(), 100);
     return () => clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
+    setMounted(true);
   }, []);
 
   const fmt = (d: Date) =>
@@ -34,7 +40,9 @@ export function RangeEventModal({ range, onSave, onClose }: RangeEventModalProps
     onSave(title.trim(), time.trim(), color);
   };
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(0,0,0,0.4)]"
       onClick={onClose}
@@ -62,20 +70,23 @@ export function RangeEventModal({ range, onSave, onClose }: RangeEventModalProps
           className="mb-4 w-full border-0 border-b border-[#ccc] bg-transparent px-0 py-1.5 text-[15px] text-[#1a1208] focus:outline-none"
         />
         <div className="mb-5 flex items-center gap-2">
-          {COLORS.map((c) => (
-            <button
-              key={c}
-              type="button"
-              onClick={() => setColor(c)}
-              className="h-[18px] w-[18px] rounded-full"
-              style={{
-                background: c,
-                outline: c === color ? "2px solid #1a1208" : "none",
-                outlineOffset: 2,
-              }}
-              aria-label={`Pick color ${c}`}
-            />
-          ))}
+          {COLORS.map((c) => {
+            const isActive = c === color;
+            return (
+              <button
+                key={c}
+                type="button"
+                onClick={() => setColor(c)}
+                className={`h-[18px] w-[18px] rounded-full transition ${
+                  isActive ? "scale-110 shadow-[0_3px_8px_rgba(0,0,0,0.25)]" : ""
+                }`}
+                style={{
+                  background: c,
+                }}
+                aria-label={`Pick color ${c}`}
+              />
+            );
+          })}
         </div>
         <div className="flex items-center justify-end gap-3">
           <button
@@ -94,6 +105,7 @@ export function RangeEventModal({ range, onSave, onClose }: RangeEventModalProps
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
