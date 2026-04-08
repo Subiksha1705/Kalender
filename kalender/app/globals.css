@@ -875,3 +875,18 @@ a {
 .anim-in-temp {
   animation: arriveFromRight 0.55s cubic-bezier(0, 0, 0.2, 1) 0.35s both;
 }
+
+@keyframes calFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cal-view-animate {
+  animation: calFadeUp 220ms ease both;
+}

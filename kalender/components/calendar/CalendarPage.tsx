@@ -26,6 +26,7 @@ const monthNames = [
 const today = new Date();
 
 type Range = { start: Date; end: Date };
+type ViewMode = "date" | "month" | "year";
 
 export default function CalendarPage() {
   const {
@@ -41,6 +42,7 @@ export default function CalendarPage() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [month, setMonth] = useState(today.getMonth());
   const [year, setYear] = useState(today.getFullYear());
+  const [viewMode, setViewMode] = useState<ViewMode>("date");
   const [dragStart, setDragStart] = useState<Date | null>(null);
   const [dragEnd, setDragEnd] = useState<Date | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -153,25 +155,69 @@ export default function CalendarPage() {
           year={year}
           onPrev={handlePrev}
           onNext={handleNext}
+          onMonthClick={() => setViewMode("month")}
+          onYearClick={() => setViewMode("year")}
         />
-        <WeekdayRow />
-        <MonthGrid
-          month={month}
-          year={year}
-          selectedDate={selectedDate}
-          today={today}
-          hasEvents={hasEvents}
-          dragStart={dragStart}
-          dragEnd={dragEnd}
-          isDragging={isDragging}
-          onRangeStart={handleRangeStart}
-          onRangeMove={handleRangeMove}
-          onRangeEnd={handleRangeEnd}
-          onGridLeave={() => setIsDragging(false)}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-        />
+        {viewMode === "date" ? (
+          <>
+            <WeekdayRow />
+            <MonthGrid
+              month={month}
+              year={year}
+              selectedDate={selectedDate}
+              today={today}
+              hasEvents={hasEvents}
+              dragStart={dragStart}
+              dragEnd={dragEnd}
+              isDragging={isDragging}
+              onRangeStart={handleRangeStart}
+              onRangeMove={handleRangeMove}
+              onRangeEnd={handleRangeEnd}
+              onGridLeave={() => setIsDragging(false)}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+            />
+          </>
+        ) : null}
+        {viewMode === "month" ? (
+          <div className="cal-view-animate grid grid-cols-3 gap-3 md:grid-cols-4">
+            {monthNames.map((label, idx) => (
+              <button
+                key={label}
+                type="button"
+                onClick={() => {
+                  setMonth(idx);
+                  setViewMode("date");
+                }}
+                className={`rounded-[14px] border border-[#c5b8ab] px-3 py-2 text-[13px] uppercase tracking-[0.08em] text-[#5a4a3a] transition ${
+                  idx === month ? "bg-[#3d2c1e] text-white" : "bg-[#f9f3ea]"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        ) : null}
+        {viewMode === "year" ? (
+          <div className="cal-view-animate grid grid-cols-3 gap-3 md:grid-cols-4">
+            {Array.from({ length: 141 }, (_, i) => year - 70 + i).map((y) => (
+              <button
+                key={y}
+                type="button"
+                onClick={() => {
+                  setYear(y);
+                  setViewMode("month");
+                }}
+                className={`rounded-[14px] border border-[#c5b8ab] px-3 py-2 text-[13px] tracking-[0.05em] text-[#5a4a3a] transition ${
+                  y === year ? "bg-[#3d2c1e] text-white" : "bg-[#f9f3ea]"
+                }`}
+              >
+                {y}
+              </button>
+            ))}
+          </div>
+        ) : null}
       </div>
       <EventPanel
         selectedDate={selectedDate}

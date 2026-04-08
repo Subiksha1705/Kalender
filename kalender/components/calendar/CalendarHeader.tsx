@@ -3,6 +3,8 @@ type CalendarHeaderProps = {
   year: number;
   onPrev: () => void;
   onNext: () => void;
+  onMonthClick?: () => void;
+  onYearClick?: () => void;
 };
 
 export default function CalendarHeader({
@@ -10,6 +12,8 @@ export default function CalendarHeader({
   year,
   onPrev,
   onNext,
+  onMonthClick,
+  onYearClick,
 }: CalendarHeaderProps) {
   return (
     <div className="flex items-center justify-between">
@@ -22,7 +26,14 @@ export default function CalendarHeader({
         >
           &#x2039;
         </button>
-        <span>{month}</span>
+        <button
+          type="button"
+          onClick={onMonthClick}
+          className={onMonthClick ? "cursor-pointer" : undefined}
+          aria-label="Select month"
+        >
+          {month}
+        </button>
         <button
           type="button"
           onClick={onNext}
@@ -32,7 +43,16 @@ export default function CalendarHeader({
           &#x203A;
         </button>
       </div>
-      <div className="text-[15px] tracking-[0.08em] text-[#5a4a3a]">{year}</div>
+      <button
+        type="button"
+        onClick={onYearClick}
+        className={`text-[15px] tracking-[0.08em] text-[#5a4a3a]${
+          onYearClick ? " cursor-pointer" : ""
+        }`}
+        aria-label="Select year"
+      >
+        {year}
+      </button>
     </div>
   );
 }
