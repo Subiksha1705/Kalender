@@ -7,7 +7,6 @@ import DayNav from "./DayNav";
 import DesertScene from "./DesertScene";
 import EventsList from "./EventsList";
 import MonthNav from "./MonthNav";
-import TemperatureBlock from "./TemperatureBlock";
 import events from "@/lib/events";
 import type { Season } from "@/lib/seasons";
 
@@ -53,9 +52,6 @@ export default function WeatherCard({ season }: WeatherCardProps) {
 
           <div className="relative">
             <div className="relative ml-auto aspect-[13/9] w-full overflow-hidden rounded-[28px] lg:aspect-auto lg:h-full lg:w-full lg:rounded-l-[40px] lg:rounded-r-none">
-              <div className={isExiting ? "anim-out-right-delay-1 absolute right-5 top-5 z-10" : "absolute right-5 top-5 z-10"}>
-                <TemperatureBlock temp={28} day={28} night={14} condition="Partly Cloudy" />
-              </div>
               <DesertScene season={season} isExiting={isExiting} onSunClick={handleNavigate} />
             </div>
           </div>
