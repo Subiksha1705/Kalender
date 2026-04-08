@@ -14,7 +14,7 @@ type WeatherCardProps = {
   season: Season;
 };
 
-const displayDate = new Date(2020, 0, 10);
+const displayDate = new Date();
 
 export default function WeatherCard({ season }: WeatherCardProps) {
   const router = useRouter();

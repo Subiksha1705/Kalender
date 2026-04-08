@@ -1,10 +1,12 @@
-import { CalendarRoot } from "@/components/CalendarRoot";
+import WeatherCard from "@/components/weather/WeatherCard";
 import { OnboardingGate } from "@/components/OnboardingGate/OnboardingGate";
 
 export default function Home() {
   return (
-    <OnboardingGate>
-      <CalendarRoot />
-    </OnboardingGate>
+    <main className="min-h-screen bg-[#F3E8DE]">
+      <OnboardingGate>
+        <WeatherCard season="summer" />
+      </OnboardingGate>
+    </main>
   );
 }
