@@ -9,6 +9,7 @@ type MonthGridProps = {
   selectedDate: Date | null;
   today: Date;
   hasEvents: (date: Date) => boolean;
+  hasNotes?: (date: Date) => boolean;
   dragStart: Date | null;
   dragEnd: Date | null;
   isDragging: boolean;
@@ -43,6 +44,7 @@ export default function MonthGrid({
   selectedDate,
   today,
   hasEvents,
+  hasNotes,
   dragStart,
   dragEnd,
   isDragging,
@@ -109,13 +111,14 @@ export default function MonthGrid({
   return (
     <div
       ref={gridRef}
-      className="grid select-none touch-none grid-cols-7 gap-3"
+      className="grid w-full select-none touch-none grid-cols-7 justify-items-center gap-3 lg:flex-1 lg:auto-rows-fr"
       onMouseLeave={onGridLeave}
     >
       {dayEntries.map(({ date, day, isOverflow }) => {
         const isSelected = selectedDate !== null && isSameDate(selectedDate, date);
         const isToday = isSameDate(today, date);
         const hasEvent = !isOverflow && hasEvents(date);
+        const hasNote = !isOverflow && (hasNotes ? hasNotes(date) : false);
         const inRange = isInRange(date, dragStart, dragEnd);
         const isRangeStart = bounds ? isSameDate(bounds.lo, date) : false;
         const isRangeEnd = bounds ? isSameDate(bounds.hi, date) : false;
@@ -129,6 +132,7 @@ export default function MonthGrid({
             isSelected={isSelected}
             isToday={isToday}
             hasEvents={hasEvent}
+            hasNotes={hasNote}
             isOverflow={isOverflow}
             isInRange={inRange}
             isRangeStart={isRangeStart}

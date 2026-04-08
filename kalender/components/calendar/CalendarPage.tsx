@@ -159,6 +159,9 @@ export default function CalendarPage() {
     return getEvents(selectedDate);
   }, [getEvents, selectedDate]);
 
+  const hasNotes = (date: Date) =>
+    notesStore.getNotesForDate(formatDateKey(date)).length > 0;
+
   const dateKey = selectedDate ? formatDateKey(selectedDate) : null;
   const notesForSelected = useMemo(
     () => (dateKey ? notesStore.getNotesForDate(dateKey) : []),
@@ -169,7 +172,7 @@ export default function CalendarPage() {
 
   return (
     <section
-      className={`grid min-h-[70vh] gap-8 bg-[#EDE8DC] transition-all duration-300 lg:min-h-[calc(100vh-180px)] lg:items-stretch ${
+      className={`grid h-full min-h-full gap-8 bg-[#EDE8DC] transition-all duration-300 lg:items-stretch ${
         showPanel ? "lg:grid-cols-[1.4fr_0.85fr]" : "lg:grid-cols-1"
       }`}
     >
@@ -182,24 +185,27 @@ export default function CalendarPage() {
           onSelectMonth={setMonth}
           onSelectYear={setYear}
         />
-        <WeekdayRow />
+        <div className="flex flex-1 flex-col gap-4">
+          <WeekdayRow />
         <MonthGrid
           month={month}
           year={year}
           selectedDate={selectedDate}
           today={today}
           hasEvents={hasEvents}
+          hasNotes={hasNotes}
           dragStart={dragStart}
           dragEnd={dragEnd}
           isDragging={isDragging}
-          onRangeStart={handleRangeStart}
-          onRangeMove={handleRangeMove}
-          onRangeEnd={handleRangeEnd}
-          onGridLeave={() => setIsDragging(false)}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-        />
+            onRangeStart={handleRangeStart}
+            onRangeMove={handleRangeMove}
+            onRangeEnd={handleRangeEnd}
+            onGridLeave={() => setIsDragging(false)}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          />
+        </div>
       </div>
       {showPanel ? (
         <div className={panelState === "closing" ? "event-panel-exit" : "event-panel-enter"}>

@@ -6,6 +6,7 @@ type DayCellProps = {
   isSelected: boolean;
   isToday: boolean;
   hasEvents: boolean;
+  hasNotes?: boolean;
   isOverflow: boolean;
   isInRange: boolean;
   isRangeStart: boolean;
@@ -24,6 +25,7 @@ export default function DayCell({
   isSelected,
   isToday,
   hasEvents,
+  hasNotes = false,
   isOverflow,
   isInRange,
   isRangeStart,
@@ -91,8 +93,11 @@ export default function DayCell({
       <span className={`${numberBase} ${todayRing} ${selectedStyle}`}>
         {day}
       </span>
-      {hasEvents ? (
-        <span className="mt-[3px] h-[5px] w-[5px] rounded-full bg-[#c87941]" />
+      {hasEvents || hasNotes ? (
+        <span className="mt-[3px] flex items-center gap-[3px]">
+          {hasEvents ? <span className="h-[5px] w-[5px] rounded-full bg-[#c87941]" /> : null}
+          {hasNotes ? <span className="h-[5px] w-[5px] rounded-full bg-[#4a7fb5]" /> : null}
+        </span>
       ) : null}
     </button>
   );
