@@ -48,7 +48,7 @@ export function TodayCard({
             {todaysNotes.map((note) => (
               <div key={note.id} className="today-event-item">
                 <span className="today-event-dot" />
-                <span>{note.text.slice(0, 32)}</span>
+                <span>{(note.title ?? note.text ?? "").slice(0, 32)}</span>
               </div>
             ))}
           </div>

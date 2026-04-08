@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import type { CalendarEvent } from "@/hooks/useEvents";
+import type { Note } from "@/hooks/useNotes";
 import ConfirmDeleteModal from "@/components/ConfirmDeleteModal";
 
 type EventPanelProps = {
   selectedDate: Date | null;
   events: CalendarEvent[];
+  notes: Note[];
   onAdd: (date: Date, title: string, time: string, color?: string) => void;
   onRemove: (date: Date, id: string) => void;
   onRemoveGroup: (groupId: string) => void;
@@ -19,6 +21,11 @@ type EventPanelProps = {
     groupId: string,
     patch: Partial<Pick<CalendarEvent, "title" | "time" | "color">>
   ) => void;
+  onAddNote: (date: Date, title: string, description: string) => void;
+  onDeleteNote: (id: string) => void;
+  onDeleteNoteGroup: (groupId: string) => void;
+  onUpdateNote: (id: string, title: string, description: string) => void;
+  onUpdateNoteGroup: (groupId: string, title: string, description: string) => void;
 };
 
 const monthNames = [
@@ -41,11 +48,17 @@ const COLORS = ["#c87941", "#e8a838", "#4a9b6f", "#4a7fb5"];
 export default function EventPanel({
   selectedDate,
   events,
+  notes,
   onAdd,
   onRemove,
   onRemoveGroup,
   onUpdate,
   onUpdateGroup,
+  onAddNote,
+  onDeleteNote,
+  onDeleteNoteGroup,
+  onUpdateNote,
+  onUpdateNoteGroup,
 }: EventPanelProps) {
   const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState("");
@@ -56,6 +69,13 @@ export default function EventPanel({
   const [editingTime, setEditingTime] = useState("");
   const [editingColor, setEditingColor] = useState(COLORS[0]);
   const [deleteTarget, setDeleteTarget] = useState<CalendarEvent | null>(null);
+  const [noteTitle, setNoteTitle] = useState("");
+  const [noteDescription, setNoteDescription] = useState("");
+  const [showNoteForm, setShowNoteForm] = useState(false);
+  const [noteDeleteId, setNoteDeleteId] = useState<string | null>(null);
+  const [noteEditingId, setNoteEditingId] = useState<string | null>(null);
+  const [noteEditingTitle, setNoteEditingTitle] = useState("");
+  const [noteEditingDescription, setNoteEditingDescription] = useState("");
 
   const handleAdd = () => {
     if (!selectedDate) return;
@@ -65,6 +85,40 @@ export default function EventPanel({
     setTime("");
     setColor(COLORS[0]);
     setShowForm(false);
+  };
+
+  const handleAddNote = () => {
+    if (!selectedDate) return;
+    if (!noteTitle.trim()) return;
+    onAddNote(selectedDate, noteTitle.trim(), noteDescription.trim());
+    setNoteTitle("");
+    setNoteDescription("");
+    setShowNoteForm(false);
+  };
+
+  const startNoteEdit = (note: Note) => {
+    setNoteEditingId(note.id);
+    setNoteEditingTitle(note.title ?? note.text ?? "");
+    setNoteEditingDescription(note.description ?? "");
+  };
+
+  const cancelNoteEdit = () => {
+    setNoteEditingId(null);
+    setNoteEditingTitle("");
+    setNoteEditingDescription("");
+  };
+
+  const saveNoteEditSingle = (note: Note) => {
+    if (!noteEditingTitle.trim()) return;
+    onUpdateNote(note.id, noteEditingTitle.trim(), noteEditingDescription.trim());
+    cancelNoteEdit();
+  };
+
+  const saveNoteEditAll = (note: Note) => {
+    if (!note.groupId) return;
+    if (!noteEditingTitle.trim()) return;
+    onUpdateNoteGroup(note.groupId, noteEditingTitle.trim(), noteEditingDescription.trim());
+    cancelNoteEdit();
   };
 
   const startEdit = (event: CalendarEvent) => {
@@ -128,7 +182,7 @@ export default function EventPanel({
       {events.length === 0 ? (
         <div className="text-sm text-[#9a8a7a]">No events.</div>
       ) : (
-        <ul className="flex flex-col gap-4">
+        <ul className="flex max-h-[220px] flex-col gap-4 overflow-y-auto pr-1">
           {events.map((event) => (
             <li key={event.id} className="flex items-start gap-3">
               <span
@@ -172,14 +226,14 @@ export default function EventPanel({
                           <button
                             type="button"
                             onClick={() => saveEditSingle(event)}
-                            className="rounded-[8px] border border-[#c5b8ab] px-3 py-1 text-[12px] text-[#5a4a3a]"
+                            className="rounded-full border border-[#c5b8ab] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#5a4a3a]"
                           >
                             Save this day
                           </button>
                           <button
                             type="button"
                             onClick={() => saveEditAll(event)}
-                            className="rounded-[8px] bg-[#3d2c1e] px-3 py-1 text-[12px] text-white"
+                            className="rounded-full bg-[#3d2c1e] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-white"
                           >
                             Save all days
                           </button>
@@ -188,7 +242,7 @@ export default function EventPanel({
                         <button
                           type="button"
                           onClick={() => saveEditSingle(event)}
-                          className="rounded-[8px] bg-[#3d2c1e] px-3 py-1 text-[12px] text-white"
+                          className="rounded-full bg-[#3d2c1e] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-white"
                         >
                           Save
                         </button>
@@ -270,7 +324,7 @@ export default function EventPanel({
               <button
                 type="button"
                 onClick={handleAdd}
-                className="rounded-[8px] bg-[#3d2c1e] px-[18px] py-[7px] text-[13px] text-white"
+                className="rounded-full bg-[#3d2c1e] px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-white"
               >
                 Add
               </button>
@@ -290,6 +344,200 @@ export default function EventPanel({
             onClick={() => setShowForm(true)}
           >
             + Add Event
+          </button>
+        )}
+      </div>
+
+      <div className="mt-8 border-t border-[#e5d9cc] pt-6">
+        <div className="mb-3 text-[13px] font-semibold uppercase tracking-[0.2em] text-[#9a8a7a]">
+          Notes
+        </div>
+        {notes.length === 0 ? (
+          <div className="text-sm text-[#9a8a7a]">No notes for this day.</div>
+        ) : (
+          <ul className="mb-4 flex max-h-[180px] flex-col gap-3 overflow-y-auto pr-1">
+            {notes.map((note) => (
+              <li
+                key={note.id}
+                className="rounded-[12px] border border-[#e5d9cc] bg-white/60 px-3 py-2"
+              >
+                {noteEditingId === note.id ? (
+                  <div className="flex flex-col gap-2">
+                    <input
+                      value={noteEditingTitle}
+                      onChange={(e) => setNoteEditingTitle(e.target.value)}
+                      className="w-full rounded-lg border border-[#E6D9CB] bg-white px-3 py-1.5 text-sm text-[#5A3E2B] outline-none focus:border-[#C9A98A]"
+                      placeholder="Note title..."
+                    />
+                    <textarea
+                      value={noteEditingDescription}
+                      onChange={(e) => setNoteEditingDescription(e.target.value)}
+                      className="w-full rounded-lg border border-[#E6D9CB] bg-white px-3 py-1.5 text-sm text-[#5A3E2B] outline-none focus:border-[#C9A98A]"
+                      rows={3}
+                      placeholder="Note description..."
+                    />
+                    <div className="flex items-center gap-2">
+                      {note.groupId ? (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => saveNoteEditSingle(note)}
+                            className="rounded-full border border-[#c5b8ab] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#5a4a3a]"
+                          >
+                            Save this day
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => saveNoteEditAll(note)}
+                            className="rounded-full bg-[#3d2c1e] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-white"
+                          >
+                            Save all days
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => saveNoteEditSingle(note)}
+                          className="rounded-full bg-[#3d2c1e] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-white"
+                        >
+                          Save
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={cancelNoteEdit}
+                        className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#9a8a7a]"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <div className="text-[14px] font-semibold text-[#1a1208]">
+                        {note.title ?? note.text ?? "Untitled"}
+                      </div>
+                      {note.description ? (
+                        <div className="text-[12px] text-[#9a8a7a]">{note.description}</div>
+                      ) : null}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => startNoteEdit(note)}
+                        className="text-[14px] text-[#9a8a7a] hover:text-[#5a4a3a]"
+                        aria-label="Edit note"
+                      >
+                        ✎
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setNoteDeleteId(note.id)}
+                        className="text-[14px] text-[#9a8a7a] hover:text-[#5a4a3a]"
+                        aria-label="Delete note"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  </div>
+                )}
+                {noteDeleteId === note.id ? (
+                  <div className="mt-2 flex items-center gap-2 text-[11px] text-[#9a8a7a]">
+                    <span>
+                      {note.groupId ? "Delete this note for today or all days?" : "Delete note?"}
+                    </span>
+                    {note.groupId ? (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onDeleteNote(note.id);
+                            setNoteDeleteId(null);
+                          }}
+                          className="rounded-full border border-[#c5b8ab] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#5a4a3a]"
+                        >
+                          This day
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onDeleteNoteGroup(note.groupId);
+                            setNoteDeleteId(null);
+                          }}
+                          className="rounded-full bg-[#3d2c1e] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-white"
+                        >
+                          All days
+                        </button>
+                      </>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onDeleteNote(note.id);
+                          setNoteDeleteId(null);
+                        }}
+                        className="rounded-full border border-[#c5b8ab] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#5a4a3a]"
+                      >
+                        Yes
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => setNoteDeleteId(null)}
+                      className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#9a8a7a]"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        )}
+        {showNoteForm ? (
+          <div className="flex flex-col gap-3">
+            <input
+              value={noteTitle}
+              onChange={(e) => setNoteTitle(e.target.value)}
+              placeholder="Note title..."
+              className="w-full rounded-[10px] border border-[#ddd] bg-transparent px-3 py-2 text-[14px] text-[#1a1208] placeholder:text-[#9a8a7a] focus:outline-none"
+            />
+            <textarea
+              value={noteDescription}
+              onChange={(e) => setNoteDescription(e.target.value)}
+              placeholder="Note description..."
+              className="w-full rounded-[12px] border border-[#ddd] bg-transparent px-3 py-2 text-[13px] text-[#1a1208] placeholder:text-[#9a8a7a] focus:outline-none"
+              rows={3}
+            />
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleAddNote}
+                className="rounded-[8px] bg-[#3d2c1e] px-[18px] py-[7px] text-[13px] text-white"
+              >
+                Add Note
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setNoteTitle("");
+                  setNoteDescription("");
+                  setShowNoteForm(false);
+                }}
+                className="text-[13px] text-[#9a8a7a]"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button
+            type="button"
+            className="w-fit rounded-[20px] border border-dashed border-[#c5b8ab] px-4 py-1.5 text-[13px] text-[#9a8a7a]"
+            onClick={() => setShowNoteForm(true)}
+          >
+            + Add Note
           </button>
         )}
       </div>

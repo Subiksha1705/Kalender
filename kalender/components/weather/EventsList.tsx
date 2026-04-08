@@ -83,7 +83,7 @@ export default function EventsList({ selectedDate }: EventsListProps) {
         <span className="text-sm text-[#9C7F6A]">No events for this day.</span>
       )}
 
-      <ul className="flex flex-col gap-3 text-sm text-[#5A3E2B]">
+      <ul className="flex max-h-[220px] flex-col gap-3 overflow-y-auto pr-1 text-sm text-[#5A3E2B]">
         {eventsForDay.map((event) => (
           <li key={event.id} className="flex items-start gap-3">
             <EventDot color={event.color} />
@@ -122,14 +122,14 @@ export default function EventsList({ selectedDate }: EventsListProps) {
                         <button
                           type="button"
                           onClick={() => saveEditSingle(event)}
-                          className="rounded-full border border-[#C9A98A] px-4 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-[#5A3E2B]"
+                          className="rounded-full border border-[#C9A98A] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#5A3E2B]"
                         >
                           Save this day
                         </button>
                         <button
                           type="button"
                           onClick={() => saveEditAll(event)}
-                          className="rounded-full bg-[#3d2c1e] px-4 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-white"
+                          className="rounded-full bg-[#3d2c1e] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-white"
                         >
                           Save all days
                         </button>
@@ -138,7 +138,7 @@ export default function EventsList({ selectedDate }: EventsListProps) {
                       <button
                         type="button"
                         onClick={() => saveEditSingle(event)}
-                        className="rounded-full border border-[#C9A98A] px-4 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-[#5A3E2B]"
+                        className="rounded-full border border-[#C9A98A] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#5A3E2B]"
                       >
                         Save
                       </button>

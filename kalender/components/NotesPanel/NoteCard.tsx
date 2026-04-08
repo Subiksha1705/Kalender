@@ -16,7 +16,12 @@ export function NoteCard({ note, onDelete }: { note: Note; onDelete: (id: string
           🗑
         </button>
       </div>
-      <div className="text-sm">{note.text}</div>
+      <div className="text-sm font-semibold">
+        {note.title ?? note.text ?? "Untitled"}
+      </div>
+      {note.description || note.text ? (
+        <div className="text-sm opacity-90">{note.description ?? note.text}</div>
+      ) : null}
       {note.attachments.length > 0 && (
         <div className="attachment-row">
           {note.attachments.map((att) => (

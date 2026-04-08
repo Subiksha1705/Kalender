@@ -73,7 +73,7 @@ export function HeroPanel({
             {todaysNotes.map((note) => (
               <div key={note.id} className="event-item">
                 <span className="event-dot" />
-                <span>{note.text.slice(0, 32)}</span>
+                <span>{(note.title ?? note.text ?? "").slice(0, 32)}</span>
               </div>
             ))}
           </div>

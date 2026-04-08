@@ -9,9 +9,15 @@ export function NoteInput({
   onAddNote,
 }: {
   selectedDate: Date | null;
-  onAddNote: (dateKey: string, text: string, attachments: Note["attachments"]) => void;
+  onAddNote: (
+    dateKey: string,
+    title: string,
+    description: string,
+    attachments: Note["attachments"]
+  ) => void;
 }) {
-  const [text, setText] = useState("");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [attachments, setAttachments] = useState<Note["attachments"]>([]);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -21,14 +27,15 @@ export function NoteInput({
       textareaRef.current.style.height = "auto";
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
-  }, [text]);
+  }, [description]);
 
-  const remaining = 200 - text.length;
+  const remaining = 200 - description.length;
 
   const handleAdd = () => {
-    if (!selectedDate || !text.trim()) return;
-    onAddNote(formatDateKey(selectedDate), text.trim(), attachments);
-    setText("");
+    if (!selectedDate || !title.trim()) return;
+    onAddNote(formatDateKey(selectedDate), title.trim(), description.trim(), attachments);
+    setTitle("");
+    setDescription("");
     setAttachments([]);
   };
 
@@ -54,12 +61,20 @@ export function NoteInput({
 
   return (
     <div className="note-input">
+      <input
+        placeholder="Title"
+        value={title}
+        maxLength={60}
+        onChange={(e) => setTitle(e.target.value)}
+        disabled={!selectedDate}
+        className="note-title"
+      />
       <textarea
         ref={textareaRef}
-        placeholder="Add a note..."
-        value={text}
+        placeholder="Add description..."
+        value={description}
         maxLength={200}
-        onChange={(e) => setText(e.target.value)}
+        onChange={(e) => setDescription(e.target.value)}
         onKeyDown={handleKeyDown}
         disabled={!selectedDate}
       />

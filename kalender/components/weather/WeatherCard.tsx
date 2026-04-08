@@ -6,6 +6,7 @@ import DateBlock from "./DateBlock";
 import DayNav from "./DayNav";
 import DesertScene from "./DesertScene";
 import EventsList from "./EventsList";
+import NotesList from "./NotesList";
 import MonthNav from "./MonthNav";
 import type { Season } from "@/lib/seasons";
 
@@ -94,10 +95,21 @@ export default function WeatherCard({ season }: WeatherCardProps) {
         <div className="grid flex-1 items-start gap-6 lg:grid-cols-[minmax(240px,1fr)_minmax(0,3fr)] lg:items-stretch lg:min-h-[70vh]">
           <div className="flex flex-col gap-10">
             <div className={isEntering ? "anim-in-date" : ""}>
-              <DateBlock date={selectedDate} />
+              <button
+                type="button"
+                onClick={handleNavigate}
+                className="text-left cursor-pointer"
+                aria-label="Open calendar"
+                title="Open calendar"
+              >
+                <DateBlock date={selectedDate} />
+              </button>
             </div>
             <div className={isEntering ? "anim-in-events" : ""}>
               <EventsList selectedDate={selectedDate} />
+            </div>
+            <div className={isEntering ? "anim-in-events" : ""}>
+              <NotesList selectedDate={selectedDate} />
             </div>
           </div>
 

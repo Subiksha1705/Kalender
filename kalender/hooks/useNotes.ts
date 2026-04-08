@@ -7,7 +7,10 @@ const STORAGE_KEY = "cal_notes_v1";
 export interface Note {
   id: string;
   dateKey: string;
-  text: string;
+  title: string;
+  description: string;
+  text?: string;
+  groupId?: string;
   attachments: Array<{ name: string; type: string; data: string }>;
   createdAt: number;
 }
@@ -31,7 +34,14 @@ function subscribe(cb: () => void): () => void {
 function init() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    cache = raw ? (JSON.parse(raw) as NoteStore) : [];
+    const parsed = raw ? (JSON.parse(raw) as NoteStore) : [];
+    cache = parsed.map((note) => ({
+      ...note,
+      title: note.title ?? note.text ?? "Untitled",
+      description: note.description ?? "",
+      attachments: note.attachments ?? [],
+      createdAt: note.createdAt ?? Date.now(),
+    }));
   } catch {
     cache = [];
   }
@@ -62,11 +72,17 @@ export function useNotes() {
   const getNotesForDate = (dateKey: string) =>
     notes.filter((n) => n.dateKey === dateKey).sort((a, b) => a.createdAt - b.createdAt);
 
-  const addNote = (dateKey: string, text: string, attachments: Note["attachments"] = []) => {
+  const addNote = (
+    dateKey: string,
+    title: string,
+    description: string,
+    attachments: Note["attachments"] = []
+  ) => {
     const note: Note = {
       id: crypto.randomUUID(),
       dateKey,
-      text,
+      title,
+      description,
       attachments,
       createdAt: Date.now(),
     };
@@ -75,8 +91,56 @@ export function useNotes() {
 
   const deleteNote = (id: string) => persist(cache.filter((n) => n.id !== id));
 
-  const updateNote = (id: string, text: string) =>
-    persist(cache.map((n) => (n.id === id ? { ...n, text } : n)));
+  const updateNote = (id: string, title: string, description: string) =>
+    persist(cache.map((n) => (n.id === id ? { ...n, title, description } : n)));
 
-  return { notes, getNotesForDate, addNote, deleteNote, updateNote };
+  const updateNoteGroup = (groupId: string, title: string, description: string) =>
+    persist(cache.map((n) => (n.groupId === groupId ? { ...n, title, description } : n)));
+
+  const addNoteRange = (
+    start: Date,
+    end: Date,
+    title: string,
+    description: string,
+    attachments: Note["attachments"] = []
+  ) => {
+    const groupId = crypto.randomUUID();
+    const days: Note[] = [];
+    const cursor = new Date(start);
+    cursor.setHours(0, 0, 0, 0);
+    const last = new Date(end);
+    last.setHours(0, 0, 0, 0);
+    while (cursor <= last) {
+      const dateKey = `${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2, "0")}-${String(
+        cursor.getDate()
+      ).padStart(2, "0")}`;
+      days.push({
+        id: crypto.randomUUID(),
+        dateKey,
+        title,
+        description,
+        groupId,
+        attachments,
+        createdAt: Date.now(),
+      });
+      cursor.setDate(cursor.getDate() + 1);
+    }
+    if (days.length > 0) {
+      persist([...cache, ...days]);
+    }
+  };
+
+  const deleteNoteGroup = (groupId: string) =>
+    persist(cache.filter((n) => n.groupId !== groupId));
+
+  return {
+    notes,
+    getNotesForDate,
+    addNote,
+    addNoteRange,
+    deleteNote,
+    deleteNoteGroup,
+    updateNote,
+    updateNoteGroup,
+  };
 }

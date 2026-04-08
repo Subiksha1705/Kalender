@@ -2,6 +2,8 @@
 
 import { useMemo, useRef, useState } from "react";
 import { useEvents } from "@/hooks/useEvents";
+import { useNotes } from "@/hooks/useNotes";
+import { formatDateKey } from "@/utils/calendar";
 import CalendarHeader from "./CalendarHeader";
 import EventPanel from "./EventPanel";
 import MonthGrid from "./MonthGrid";
@@ -29,6 +31,7 @@ export default function CalendarPage() {
     updateEventGroup,
     hasEvents,
   } = useEvents();
+  const notesStore = useNotes();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [month, setMonth] = useState(today.getMonth());
   const [year, setYear] = useState(today.getFullYear());
@@ -156,11 +159,17 @@ export default function CalendarPage() {
     return getEvents(selectedDate);
   }, [getEvents, selectedDate]);
 
+  const dateKey = selectedDate ? formatDateKey(selectedDate) : null;
+  const notesForSelected = useMemo(
+    () => (dateKey ? notesStore.getNotesForDate(dateKey) : []),
+    [dateKey, notesStore]
+  );
+
   const showPanel = panelState !== "hidden";
 
   return (
     <section
-      className={`grid min-h-[70vh] gap-8 transition-all duration-300 lg:min-h-[calc(100vh-180px)] lg:items-stretch ${
+      className={`grid min-h-[70vh] gap-8 bg-[#EDE8DC] transition-all duration-300 lg:min-h-[calc(100vh-180px)] lg:items-stretch ${
         showPanel ? "lg:grid-cols-[1.4fr_0.85fr]" : "lg:grid-cols-1"
       }`}
     >
@@ -197,11 +206,19 @@ export default function CalendarPage() {
           <EventPanel
             selectedDate={selectedDate}
             events={eventsForSelected}
+            notes={notesForSelected}
             onAdd={addEvent}
             onRemove={removeEvent}
             onRemoveGroup={removeEventGroup}
             onUpdate={updateEvent}
             onUpdateGroup={updateEventGroup}
+            onAddNote={(date, title, description) => {
+              notesStore.addNote(formatDateKey(date), title, description, []);
+            }}
+            onDeleteNote={notesStore.deleteNote}
+            onDeleteNoteGroup={notesStore.deleteNoteGroup}
+            onUpdateNote={notesStore.updateNote}
+            onUpdateNoteGroup={notesStore.updateNoteGroup}
           />
         </div>
       ) : null}
@@ -209,8 +226,12 @@ export default function CalendarPage() {
       {rangeModal ? (
         <RangeEventModal
           range={rangeModal}
-          onSave={(title, time, color) => {
+          onSaveEvent={(title, time, color) => {
             addEventRange(rangeModal.start, rangeModal.end, title, time, color);
+            setRangeModal(null);
+          }}
+          onSaveNote={(title, description) => {
+            notesStore.addNoteRange(rangeModal.start, rangeModal.end, title, description, []);
             setRangeModal(null);
           }}
           onClose={() => setRangeModal(null)}

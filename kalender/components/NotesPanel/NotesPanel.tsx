@@ -16,7 +16,12 @@ export function NotesPanel({
   onClose: () => void;
   selectedDate: Date | null;
   notes: Note[];
-  onAddNote: (dateKey: string, text: string, attachments: Note["attachments"]) => void;
+  onAddNote: (
+    dateKey: string,
+    title: string,
+    description: string,
+    attachments: Note["attachments"]
+  ) => void;
   onDeleteNote: (id: string) => void;
 }) {
   const formatted = selectedDate
