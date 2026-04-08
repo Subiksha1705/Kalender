@@ -1,12 +1,20 @@
 import { seasonTokens, type Season } from "@/lib/seasons";
+import type { CSSProperties } from "react";
 
-type HillLayerProps = { season: Season };
+type HillLayerProps = {
+  season: Season;
+  isExiting: boolean;
+};
 
-export default function HillLayer({ season }: HillLayerProps) {
+const exitStyle: CSSProperties = {
+  animation: "slideOutDown 0.5s cubic-bezier(0.4,0,1,1) 0.1s forwards",
+};
+
+export default function HillLayer({ season, isExiting }: HillLayerProps) {
   const { hillBack, hillMid, hillFront } = seasonTokens[season];
 
   return (
-    <g>
+    <g style={isExiting ? exitStyle : undefined}>
       <path
         d="M0 200 C80 155 180 160 280 195 C370 225 450 255 520 290 L520 360 L0 360 Z"
         fill={hillBack}

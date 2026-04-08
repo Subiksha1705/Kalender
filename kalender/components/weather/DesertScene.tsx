@@ -7,10 +7,11 @@ import TreeSet from "./TreeSet";
 
 type DesertSceneProps = {
   season: Season;
+  isExiting: boolean;
   onSunClick: () => void;
 };
 
-export default function DesertScene({ season, onSunClick }: DesertSceneProps) {
+export default function DesertScene({ season, isExiting, onSunClick }: DesertSceneProps) {
   const gradientId = useId();
   const clipId = useId();
   const { skyTop, skyMid, skyBottom, sunGlow } = seasonTokens[season];
@@ -36,11 +37,10 @@ export default function DesertScene({ season, onSunClick }: DesertSceneProps) {
 
       <g clipPath={`url(#${clipId})`}>
         <rect width="520" height="360" fill={`url(#${gradientId})`} />
-        <CloudGroup />
-        <SkySun onClick={onSunClick} skyColor={sunGlow} />
-        <HillLayer season={season} />
-        <TreeSet />
-        
+        <CloudGroup isExiting={isExiting} />
+        <SkySun onClick={onSunClick} skyColor={sunGlow} isExiting={isExiting} />
+        <HillLayer season={season} isExiting={isExiting} />
+        <TreeSet isExiting={isExiting} />
       </g>
     </svg>
   );

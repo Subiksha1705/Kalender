@@ -751,3 +751,66 @@ a {
     --notes-width: 18%;
   }
 }
+
+/* ─── Exit Animation Keyframes ─────────────────────────────── */
+
+@keyframes slideOutLeft {
+  from { transform: translateX(0);     opacity: 1; }
+  to   { transform: translateX(-90px); opacity: 0; }
+}
+
+@keyframes slideOutRight {
+  from { transform: translateX(0);     opacity: 1; }
+  to   { transform: translateX(160px); opacity: 0; }
+}
+
+@keyframes slideOutDown {
+  from { transform: translateY(0);      opacity: 1; }
+  to   { transform: translateY(130px);  opacity: 0; }
+}
+
+@keyframes shrinkFade {
+  from { transform: scale(1);   opacity: 1; }
+  to   { transform: scale(0);   opacity: 0; }
+}
+
+/* ─── Calendar Enter Keyframe ───────────────────────────────── */
+
+@keyframes slideInFromRight {
+  from { transform: translateX(60px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+/* ─── Animation utility classes ─────────────────────────────── */
+
+.anim-out-left {
+  animation: slideOutLeft 0.5s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+.anim-out-left-delay-1 {
+  animation: slideOutLeft 0.5s cubic-bezier(0.4, 0, 1, 1) 0.1s forwards;
+}
+
+.anim-out-right {
+  animation: slideOutRight 0.4s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+.anim-out-right-delay-1 {
+  animation: slideOutRight 0.5s cubic-bezier(0.4, 0, 1, 1) 0.1s forwards;
+}
+
+.anim-shrink-fade {
+  animation: shrinkFade 0.4s cubic-bezier(0.4, 0, 1, 1) 0.1s forwards;
+}
+
+.anim-out-down {
+  animation: slideOutDown 0.5s cubic-bezier(0.4, 0, 1, 1) 0.1s forwards;
+}
+
+.anim-out-down-delay-1 {
+  animation: slideOutDown 0.5s cubic-bezier(0.4, 0, 1, 1) 0.2s forwards;
+}
+
+.anim-enter-right {
+  animation: slideInFromRight 0.55s cubic-bezier(0, 0, 0.2, 1) forwards;
+}

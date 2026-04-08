@@ -1,6 +1,16 @@
-export default function CloudGroup() {
+import type { CSSProperties } from "react";
+
+type CloudGroupProps = {
+  isExiting: boolean;
+};
+
+const exitStyle: CSSProperties = {
+  animation: "slideOutRight 0.4s cubic-bezier(0.4,0,1,1) forwards",
+};
+
+export default function CloudGroup({ isExiting }: CloudGroupProps) {
   return (
-    <g fill="white">
+    <g fill="white" style={isExiting ? exitStyle : undefined}>
       <g transform="translate(0,-10)">
         <ellipse cx="108" cy="90" rx="38" ry="22" />
         <ellipse cx="140" cy="78" rx="30" ry="20" />

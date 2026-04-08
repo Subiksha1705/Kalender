@@ -1,4 +1,14 @@
-export default function TreeSet() {
+import type { CSSProperties } from "react";
+
+type TreeSetProps = {
+  isExiting: boolean;
+};
+
+const exitStyle: CSSProperties = {
+  animation: "slideOutDown 0.5s cubic-bezier(0.4,0,1,1) 0.2s forwards",
+};
+
+export default function TreeSet({ isExiting }: TreeSetProps) {
   function Cypress({
     x,
     y,
@@ -42,7 +52,7 @@ export default function TreeSet() {
   }
 
   return (
-    <g>
+    <g style={isExiting ? exitStyle : undefined}>
       <Cypress x={128} y={282} height={78} width={18} />
       <Cypress x={152} y={290} height={68} width={16} />
       <Cypress x={418} y={308} height={62} width={16} />
