@@ -28,7 +28,16 @@ const today = new Date();
 type Range = { start: Date; end: Date };
 
 export default function CalendarPage() {
-  const { getEvents, addEvent, addEventRange, removeEvent, hasEvents } = useEvents();
+  const {
+    getEvents,
+    addEvent,
+    addEventRange,
+    removeEvent,
+    removeEventGroup,
+    updateEvent,
+    updateEventGroup,
+    hasEvents,
+  } = useEvents();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [month, setMonth] = useState(today.getMonth());
   const [year, setYear] = useState(today.getFullYear());
@@ -169,13 +178,16 @@ export default function CalendarPage() {
         events={eventsForSelected}
         onAdd={addEvent}
         onRemove={removeEvent}
+        onRemoveGroup={removeEventGroup}
+        onUpdate={updateEvent}
+        onUpdateGroup={updateEventGroup}
       />
 
       {rangeModal ? (
         <RangeEventModal
           range={rangeModal}
-          onSave={(title, color) => {
-            addEventRange(rangeModal.start, rangeModal.end, title, color);
+          onSave={(title, time, color) => {
+            addEventRange(rangeModal.start, rangeModal.end, title, time, color);
             setRangeModal(null);
           }}
           onClose={() => setRangeModal(null)}

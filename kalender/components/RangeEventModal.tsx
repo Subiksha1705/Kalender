@@ -11,12 +11,13 @@ type Range = {
 
 type RangeEventModalProps = {
   range: Range;
-  onSave: (title: string, color: string) => void;
+  onSave: (title: string, time: string, color: string) => void;
   onClose: () => void;
 };
 
 export function RangeEventModal({ range, onSave, onClose }: RangeEventModalProps) {
   const [title, setTitle] = useState("");
+  const [time, setTime] = useState("");
   const [color, setColor] = useState(COLORS[0]);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -30,7 +31,7 @@ export function RangeEventModal({ range, onSave, onClose }: RangeEventModalProps
 
   const handleSave = () => {
     if (!title.trim()) return;
-    onSave(title.trim(), color);
+    onSave(title.trim(), time.trim(), color);
   };
 
   return (
@@ -53,6 +54,12 @@ export function RangeEventModal({ range, onSave, onClose }: RangeEventModalProps
           onKeyDown={(e) => e.key === "Enter" && handleSave()}
           placeholder="Event name..."
           className="mb-4 w-full border-0 border-b border-[#ccc] bg-transparent px-0 py-1.5 text-[15px] text-[#1a1208] placeholder:text-[#9a8a7a] focus:outline-none"
+        />
+        <input
+          type="time"
+          value={time}
+          onChange={(e) => setTime(e.target.value)}
+          className="mb-4 w-full border-0 border-b border-[#ccc] bg-transparent px-0 py-1.5 text-[15px] text-[#1a1208] focus:outline-none"
         />
         <div className="mb-5 flex items-center gap-2">
           {COLORS.map((c) => (
