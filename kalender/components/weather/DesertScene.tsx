@@ -1,4 +1,5 @@
 import { useId } from "react";
+import type { CSSProperties } from "react";
 import { seasonTokens, type Season } from "@/lib/seasons";
 import CloudGroup from "./CloudGroup";
 import HillLayer from "./HillLayer";
@@ -8,13 +9,23 @@ import TreeSet from "./TreeSet";
 type DesertSceneProps = {
   season: Season;
   isExiting: boolean;
+  isEntering: boolean;
   onSunClick: () => void;
 };
 
-export default function DesertScene({ season, isExiting, onSunClick }: DesertSceneProps) {
+export default function DesertScene({
+  season,
+  isExiting,
+  isEntering,
+  onSunClick,
+}: DesertSceneProps) {
   const gradientId = useId();
   const clipId = useId();
   const { skyTop, skyMid, skyBottom, sunGlow } = seasonTokens[season];
+
+  const skyStyle: CSSProperties | undefined = isEntering
+    ? { animation: "skyFadeIn 0.5s cubic-bezier(0,0,0.2,1) both" }
+    : undefined;
 
   return (
     <svg
@@ -36,11 +47,11 @@ export default function DesertScene({ season, isExiting, onSunClick }: DesertSce
       </defs>
 
       <g clipPath={`url(#${clipId})`}>
-        <rect width="520" height="360" fill={`url(#${gradientId})`} />
-        <CloudGroup isExiting={isExiting} />
-        <SkySun onClick={onSunClick} skyColor={sunGlow} isExiting={isExiting} />
-        <HillLayer season={season} isExiting={isExiting} />
-        <TreeSet isExiting={isExiting} />
+        <rect width="520" height="360" fill={`url(#${gradientId})`} style={skyStyle} />
+        <CloudGroup isExiting={isExiting} isEntering={isEntering} />
+        <SkySun onClick={onSunClick} skyColor={sunGlow} isExiting={isExiting} isEntering={isEntering} />
+        <HillLayer season={season} isExiting={isExiting} isEntering={isEntering} />
+        <TreeSet isExiting={isExiting} isEntering={isEntering} />
       </g>
     </svg>
   );

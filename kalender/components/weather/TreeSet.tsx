@@ -2,13 +2,20 @@ import type { CSSProperties } from "react";
 
 type TreeSetProps = {
   isExiting: boolean;
+  isEntering: boolean;
 };
 
-const exitStyle: CSSProperties = {
-  animation: "slideOutDown 0.5s cubic-bezier(0.4,0,1,1) 0.2s forwards",
-};
+function getStyle(isExiting: boolean, isEntering: boolean): CSSProperties | undefined {
+  if (isExiting) {
+    return { animation: "slideOutDown 0.5s cubic-bezier(0.4,0,1,1) 0.2s forwards" };
+  }
+  if (isEntering) {
+    return { animation: "arriveFromBelow 0.5s cubic-bezier(0,0,0.2,1) 0.3s both" };
+  }
+  return undefined;
+}
 
-export default function TreeSet({ isExiting }: TreeSetProps) {
+export default function TreeSet({ isExiting, isEntering }: TreeSetProps) {
   function Cypress({
     x,
     y,
@@ -52,7 +59,7 @@ export default function TreeSet({ isExiting }: TreeSetProps) {
   }
 
   return (
-    <g style={isExiting ? exitStyle : undefined}>
+    <g style={getStyle(isExiting, isEntering)}>
       <Cypress x={128} y={282} height={78} width={18} />
       <Cypress x={152} y={290} height={68} width={16} />
       <Cypress x={418} y={308} height={62} width={16} />

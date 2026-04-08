@@ -4,17 +4,24 @@ import type { CSSProperties } from "react";
 type HillLayerProps = {
   season: Season;
   isExiting: boolean;
+  isEntering: boolean;
 };
 
-const exitStyle: CSSProperties = {
-  animation: "slideOutDown 0.5s cubic-bezier(0.4,0,1,1) 0.1s forwards",
-};
+function getStyle(isExiting: boolean, isEntering: boolean): CSSProperties | undefined {
+  if (isExiting) {
+    return { animation: "slideOutDown 0.5s cubic-bezier(0.4,0,1,1) 0.1s forwards" };
+  }
+  if (isEntering) {
+    return { animation: "arriveFromBelow 0.5s cubic-bezier(0,0,0.2,1) 0.2s both" };
+  }
+  return undefined;
+}
 
-export default function HillLayer({ season, isExiting }: HillLayerProps) {
+export default function HillLayer({ season, isExiting, isEntering }: HillLayerProps) {
   const { hillBack, hillMid, hillFront } = seasonTokens[season];
 
   return (
-    <g style={isExiting ? exitStyle : undefined}>
+    <g style={getStyle(isExiting, isEntering)}>
       <path
         d="M0 200 C80 155 180 160 280 195 C370 225 450 255 520 290 L520 360 L0 360 Z"
         fill={hillBack}

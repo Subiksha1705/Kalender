@@ -814,3 +814,64 @@ a {
 .anim-enter-right {
   animation: slideInFromRight 0.55s cubic-bezier(0, 0, 0.2, 1) forwards;
 }
+
+/* ─── Entrance Animation Keyframes ──────────────────────────── */
+
+@keyframes arriveFromRight {
+  from { transform: translateX(160px); opacity: 0; }
+  to   { transform: translateX(0);     opacity: 1; }
+}
+
+@keyframes arriveFromLeft {
+  from { transform: translateX(-90px); opacity: 0; }
+  to   { transform: translateX(0);     opacity: 1; }
+}
+
+@keyframes arriveFromBelow {
+  from { transform: translateY(130px); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+
+@keyframes growFadeIn {
+  from { transform: scale(0);   opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+@keyframes skyFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ─── Entrance utility classes ───────────────────────────────── */
+
+.anim-in-sky {
+  animation: skyFadeIn 0.5s cubic-bezier(0, 0, 0.2, 1) both;
+}
+
+.anim-in-cloud {
+  animation: arriveFromRight 0.45s cubic-bezier(0, 0, 0.2, 1) both;
+}
+
+.anim-in-sun {
+  animation: growFadeIn 0.45s cubic-bezier(0, 0, 0.2, 1) 0.15s both;
+}
+
+.anim-in-hills {
+  animation: arriveFromBelow 0.5s cubic-bezier(0, 0, 0.2, 1) 0.2s both;
+}
+
+.anim-in-trees {
+  animation: arriveFromBelow 0.5s cubic-bezier(0, 0, 0.2, 1) 0.3s both;
+}
+
+.anim-in-date {
+  animation: arriveFromLeft 0.55s cubic-bezier(0, 0, 0.2, 1) 0.1s both;
+}
+
+.anim-in-events {
+  animation: arriveFromLeft 0.55s cubic-bezier(0, 0, 0.2, 1) 0.25s both;
+}
+
+.anim-in-temp {
+  animation: arriveFromRight 0.55s cubic-bezier(0, 0, 0.2, 1) 0.35s both;
+}

@@ -2,15 +2,22 @@ import type { CSSProperties } from "react";
 
 type CloudGroupProps = {
   isExiting: boolean;
+  isEntering: boolean;
 };
 
-const exitStyle: CSSProperties = {
-  animation: "slideOutRight 0.4s cubic-bezier(0.4,0,1,1) forwards",
-};
+function getStyle(isExiting: boolean, isEntering: boolean): CSSProperties | undefined {
+  if (isExiting) {
+    return { animation: "slideOutRight 0.4s cubic-bezier(0.4,0,1,1) forwards" };
+  }
+  if (isEntering) {
+    return { animation: "arriveFromRight 0.45s cubic-bezier(0,0,0.2,1) both" };
+  }
+  return undefined;
+}
 
-export default function CloudGroup({ isExiting }: CloudGroupProps) {
+export default function CloudGroup({ isExiting, isEntering }: CloudGroupProps) {
   return (
-    <g fill="white" style={isExiting ? exitStyle : undefined}>
+    <g fill="white" style={getStyle(isExiting, isEntering)}>
       <g transform="translate(0,-10)">
         <ellipse cx="108" cy="90" rx="38" ry="22" />
         <ellipse cx="140" cy="78" rx="30" ry="20" />
