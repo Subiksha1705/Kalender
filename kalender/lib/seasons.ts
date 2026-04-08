@@ -13,13 +13,13 @@ export const seasonTokens: Record<
   }
 > = {
   summer: {
-    skyTop: "#F36A6A",
-    skyMid: "#F28B5D",
-    skyBottom: "#F5B02E",
-    hillFront: "#C47A2B",
-    hillMid: "#B56B23",
-    hillBack: "#9B5E1A",
-    sunGlow: "#FFF176",
+    skyTop: "#E8475F",
+    skyMid: "#F07840",
+    skyBottom: "#F5A623",
+    hillBack: "#7B4A18",
+    hillMid: "#9B5E28",
+    hillFront: "#B8722E",
+    sunGlow: "#FFE000",
   },
   winter: {
     skyTop: "#6FA8DC",

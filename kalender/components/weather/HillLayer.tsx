@@ -1,8 +1,6 @@
 import { seasonTokens, type Season } from "@/lib/seasons";
 
-type HillLayerProps = {
-  season: Season;
-};
+type HillLayerProps = { season: Season };
 
 export default function HillLayer({ season }: HillLayerProps) {
   const { hillBack, hillMid, hillFront } = seasonTokens[season];
@@ -10,25 +8,21 @@ export default function HillLayer({ season }: HillLayerProps) {
   return (
     <g>
       <path
-        d="M0 230 C120 190 240 190 360 220 C430 240 480 260 520 300 L520 360 L0 360 Z"
+        d="M0 200 C80 155 180 160 280 195 C370 225 450 255 520 290 L520 360 L0 360 Z"
         fill={hillBack}
       />
       <path
-        d="M260 235 C320 215 390 215 460 235 C505 250 530 275 540 295 L540 360 L250 360 Z"
+        d="M240 225 C310 205 390 208 465 228 C505 242 530 265 540 288 L540 360 L230 360 Z"
         fill={hillMid}
       />
       <path
-        d="M220 260 C300 235 380 235 450 255 C495 268 525 295 540 320 L540 360 L210 360 Z"
+        d="M0 268 C100 248 210 252 310 270 C375 282 430 305 480 328 L480 360 L0 360 Z"
         fill={hillFront}
       />
       <path
-        d="M0 285 C120 260 220 265 300 285 C350 298 390 318 420 340 C360 340 300 345 230 348 C150 352 80 345 0 335 Z"
-        fill={hillFront}
-      />
-      <path
-        d="M-10 305 C80 285 160 288 230 305 C270 314 300 330 320 350 C260 350 190 352 120 354 C40 356 0 350 -20 344 Z"
+        d="M300 290 C370 272 430 272 490 290 C515 300 535 318 545 338 L545 360 L290 360 Z"
         fill={hillMid}
-        opacity="0.8"
+        opacity="0.85"
       />
     </g>
   );

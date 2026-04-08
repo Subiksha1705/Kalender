@@ -20,29 +20,25 @@ export default function WeatherCard({ season }: WeatherCardProps) {
   const router = useRouter();
 
   return (
-    <section className="flex min-h-screen w-full flex-col bg-[#F5EFE6] px-6 py-10 md:px-12 md:py-12">
-      <div className="flex flex-1 flex-col gap-8">
-        <div className="flex items-center justify-between">
-          <DayNav />
-          <MonthNav month="January" />
+    <section className="flex min-h-screen w-full flex-col bg-[#F5EFE6] px-6 py-10 md:px-12 lg:pr-0">
+      <div className="mx-auto flex w-full max-w-none flex-1 flex-col gap-8">
+        <div className="grid w-full grid-cols-[1fr_auto] items-center gap-4 lg:grid-cols-[minmax(240px,1fr)_minmax(0,3fr)]">
+          <div className="flex items-center justify-start">
+            <DayNav />
+          </div>
+          <div className="flex items-center justify-end lg:justify-start">
+            <MonthNav month="January" />
+          </div>
         </div>
 
-        <div className="grid flex-1 items-center gap-8 lg:grid-cols-[1.05fr_1.4fr]">
-          <div className="flex flex-col justify-between gap-10">
+        <div className="grid flex-1 items-start gap-6 lg:grid-cols-[minmax(240px,1fr)_minmax(0,3fr)] lg:items-stretch lg:min-h-[70vh]">
+          <div className="flex flex-col gap-10">
             <DateBlock date={displayDate} />
             <EventsList events={events} />
           </div>
 
-          <div className="relative flex min-h-[360px] flex-col md:min-h-[460px] lg:min-h-[540px]">
-            <div className="absolute right-6 top-6 z-10">
-              <TemperatureBlock
-                temp={28}
-                day={28}
-                night={14}
-                condition="Partly Cloudy"
-              />
-            </div>
-            <div className="flex-1 overflow-hidden rounded-[28px]">
+          <div className="relative">
+            <div className="relative ml-auto aspect-[13/9] w-full overflow-hidden rounded-[28px] lg:aspect-auto lg:h-full lg:w-full lg:rounded-l-[40px] lg:rounded-r-none">
               <DesertScene
                 season={season}
                 onSunClick={() => router.push("/calendar")}

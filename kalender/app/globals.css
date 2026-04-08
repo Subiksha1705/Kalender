@@ -731,3 +731,23 @@ a {
     opacity: 1;
   }
 }
+
+@media (min-width: 1024px) {
+  :root {
+    --hero-width: 24%;
+    --calendar-width: 56%;
+    --notes-width: 20%;
+  }
+
+  .calendar-shell {
+    padding: 20px;
+  }
+}
+
+@media (min-width: 1280px) {
+  :root {
+    --hero-width: 22%;
+    --calendar-width: 60%;
+    --notes-width: 18%;
+  }
+}

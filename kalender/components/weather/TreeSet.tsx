@@ -1,18 +1,51 @@
 export default function TreeSet() {
+  function Cypress({
+    x,
+    y,
+    height = 70,
+    width = 16,
+  }: {
+    x: number;
+    y: number;
+    height?: number;
+    width?: number;
+  }) {
+    const hw = width / 2;
+    const trunkH = height * 0.18;
+    const trunkW = width * 0.22;
+    return (
+      <g fill="#3B2009">
+        <rect
+          x={x - trunkW / 2}
+          y={y - trunkH}
+          width={trunkW}
+          height={trunkH}
+          rx={trunkW / 2}
+        />
+        <path
+          d={`
+            M ${x} ${y - height}
+            C ${x + hw * 0.6} ${y - height + height * 0.25},
+              ${x + hw} ${y - height * 0.6},
+              ${x + hw * 0.7} ${y - trunkH}
+            C ${x + hw * 0.3} ${y},
+              ${x - hw * 0.3} ${y},
+              ${x - hw * 0.7} ${y - trunkH}
+            C ${x - hw} ${y - height * 0.6},
+              ${x - hw * 0.6} ${y - height + height * 0.25},
+              ${x} ${y - height}
+            Z
+          `}
+        />
+      </g>
+    );
+  }
+
   return (
-    <g fill="#5A3E2B">
-      <g>
-        <rect x="120" y="250" width="10" height="30" rx="5" />
-        <ellipse cx="125" cy="240" rx="12" ry="22" />
-      </g>
-      <g>
-        <rect x="145" y="258" width="10" height="28" rx="5" />
-        <ellipse cx="150" cy="248" rx="12" ry="20" />
-      </g>
-      <g>
-        <rect x="410" y="295" width="12" height="36" rx="6" />
-        <ellipse cx="416" cy="285" rx="14" ry="26" />
-      </g>
+    <g>
+      <Cypress x={128} y={282} height={78} width={18} />
+      <Cypress x={152} y={290} height={68} width={16} />
+      <Cypress x={418} y={308} height={62} width={16} />
     </g>
   );
 }
