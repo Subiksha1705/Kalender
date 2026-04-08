@@ -19,6 +19,11 @@ type NoteStore = Note[];
 
 let cache: NoteStore = [];
 let listeners: Array<() => void> = [];
+const SERVER_SNAPSHOT: NoteStore = [];
+
+function getServerSnapshot(): NoteStore {
+  return SERVER_SNAPSHOT;
+}
 
 function getSnapshot(): NoteStore {
   return cache;
@@ -67,7 +72,7 @@ function persist(notes: NoteStore) {
 }
 
 export function useNotes() {
-  const notes = useSyncExternalStore(subscribe, getSnapshot, () => [] as NoteStore);
+  const notes = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   const getNotesForDate = (dateKey: string) =>
     notes.filter((n) => n.dateKey === dateKey).sort((a, b) => a.createdAt - b.createdAt);

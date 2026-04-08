@@ -100,7 +100,10 @@ export default function NotesList({ selectedDate }: NotesListProps) {
                         </button>
                         <button
                           type="button"
-                          onClick={() => saveEditAll(note.groupId)}
+                          onClick={() => {
+                            if (!note.groupId) return;
+                            saveEditAll(note.groupId);
+                          }}
                           className="rounded-full bg-[#3d2c1e] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-white"
                         >
                           Save all days
@@ -176,6 +179,7 @@ export default function NotesList({ selectedDate }: NotesListProps) {
                       <button
                         type="button"
                         onClick={() => {
+                          if (!note.groupId) return;
                           deleteNoteGroup(note.groupId);
                           setDeleteId(null);
                         }}

@@ -462,6 +462,7 @@ export default function EventPanel({
                         <button
                           type="button"
                           onClick={() => {
+                            if (!note.groupId) return;
                             onDeleteNoteGroup(note.groupId);
                             setNoteDeleteId(null);
                           }}
