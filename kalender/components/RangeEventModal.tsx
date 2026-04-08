@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-const COLORS = ["#D94F3D", "#E8A838", "#4A9B6F", "#4A7FB5"];
+const COLORS = ["#c87941", "#e8a838", "#4a9b6f", "#4a7fb5"];
 
 type Range = {
   start: Date;
@@ -11,65 +11,79 @@ type Range = {
 
 type RangeEventModalProps = {
   range: Range;
-  onSave: (data: { title: string; color: string; start: Date; end: Date }) => void;
+  onSave: (title: string, color: string) => void;
   onClose: () => void;
 };
 
 export function RangeEventModal({ range, onSave, onClose }: RangeEventModalProps) {
   const [title, setTitle] = useState("");
   const [color, setColor] = useState(COLORS[0]);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    const t = setTimeout(() => inputRef.current?.focus(), 100);
+    return () => clearTimeout(t);
+  }, []);
 
   const fmt = (d: Date) =>
     d.toLocaleDateString("en-US", { day: "numeric", month: "short" });
 
   const handleSave = () => {
     if (!title.trim()) return;
-    onSave({ title: title.trim(), color, start: range.start, end: range.end });
+    onSave(title.trim(), color);
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-card text-left" onClick={(e) => e.stopPropagation()}>
-        <h3 className="text-lg font-semibold text-[#3D2C1E]">Add event</h3>
-        <p className="mt-1 text-xs uppercase tracking-[0.25em] text-[#9C7F6A]">
-          {fmt(range.start)} → {fmt(range.end)}
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(0,0,0,0.4)]"
+      onClick={onClose}
+    >
+      <div
+        className="w-[min(90vw,360px)] rounded-[16px] border-[1.5px] border-[#1a1208] bg-[#f5efe6] p-7 shadow-[0_24px_64px_rgba(0,0,0,0.18)]"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <p className="mb-2 text-[13px] tracking-[0.05em] text-[#9a8a7a]">
+          {fmt(range.start)} {"->"} {fmt(range.end)}
         </p>
+        <h3 className="mb-4 text-[17px] text-[#1a1208]">Add event for all days</h3>
         <input
-          autoFocus
+          ref={inputRef}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSave()}
-          placeholder="Event name…"
-          className="mt-4 w-full rounded-lg border border-[#E6D9CB] bg-white px-3 py-2 text-sm text-[#5A3E2B] outline-none focus:border-[#C9A98A]"
+          placeholder="Event name..."
+          className="mb-4 w-full border-0 border-b border-[#ccc] bg-transparent px-0 py-1.5 text-[15px] text-[#1a1208] placeholder:text-[#9a8a7a] focus:outline-none"
         />
-        <div className="mt-3 flex items-center gap-2">
+        <div className="mb-5 flex items-center gap-2">
           {COLORS.map((c) => (
             <button
               key={c}
               type="button"
               onClick={() => setColor(c)}
-              className="h-5 w-5 rounded-full"
+              className="h-[18px] w-[18px] rounded-full"
               style={{
                 background: c,
-                outline: c === color ? "2px solid #3D2C1E" : "none",
+                outline: c === color ? "2px solid #1a1208" : "none",
+                outlineOffset: 2,
               }}
+              aria-label={`Pick color ${c}`}
             />
           ))}
         </div>
-        <div className="mt-5 flex items-center justify-end gap-3">
+        <div className="flex items-center justify-end gap-3">
           <button
             type="button"
-            className="rounded-full border border-[#C9A98A] px-4 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-[#5A3E2B]"
             onClick={onClose}
+            className="rounded-[8px] border border-[#ccc] px-4 py-2 text-[14px]"
           >
             Cancel
           </button>
           <button
             type="button"
-            className="rounded-full bg-[#3D2C1E] px-4 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-white"
             onClick={handleSave}
+            className="rounded-[8px] bg-[#3d2c1e] px-5 py-2 text-[14px] text-white"
           >
-            Save
+            Save for all days
           </button>
         </div>
       </div>

@@ -13,11 +13,11 @@ export default function CalendarHeader({
 }: CalendarHeaderProps) {
   return (
     <div className="flex items-center justify-between">
-      <div className="flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.3em] text-[#9C7F6A]">
+      <div className="flex items-center gap-2 text-[15px] font-medium uppercase tracking-[0.12em] text-[#1a1208]">
         <button
           type="button"
           onClick={onPrev}
-          className="rounded-full border border-[#E6D9CB] px-2 py-1 text-[#5A3E2B] transition hover:border-[#C9A98A]"
+          className="px-2 text-base text-[#1a1208]"
           aria-label="Previous month"
         >
           &#x2039;
@@ -26,15 +26,13 @@ export default function CalendarHeader({
         <button
           type="button"
           onClick={onNext}
-          className="rounded-full border border-[#E6D9CB] px-2 py-1 text-[#5A3E2B] transition hover:border-[#C9A98A]"
+          className="px-2 text-base text-[#1a1208]"
           aria-label="Next month"
         >
           &#x203A;
         </button>
       </div>
-      <div className="text-sm font-semibold uppercase tracking-[0.3em] text-[#9C7F6A]">
-        {year}
-      </div>
+      <div className="text-[15px] tracking-[0.08em] text-[#5a4a3a]">{year}</div>
     </div>
   );
 }

@@ -1,26 +1,25 @@
-import type { CalendarEvent } from "@/hooks/useEvents";
+"use client";
+
+import { useEffect, useRef } from "react";
 import DayCell from "./DayCell";
 
 type MonthGridProps = {
   month: number;
   year: number;
   selectedDate: Date | null;
-  events: CalendarEvent[];
-  onSelect: (date: Date) => void;
   today: Date;
-  rangeStart: Date | null;
-  rangeEnd: Date | null;
+  hasEvents: (date: Date) => boolean;
+  dragStart: Date | null;
+  dragEnd: Date | null;
   isDragging: boolean;
   onRangeStart: (date: Date) => void;
   onRangeMove: (date: Date) => void;
-  onRangeEnd: () => void;
+  onRangeEnd: (date: Date) => void;
   onGridLeave: () => void;
+  onTouchStart: (event: TouchEvent) => void;
+  onTouchMove: (event: TouchEvent) => void;
+  onTouchEnd: (event: TouchEvent) => void;
 };
-
-const formatKey = (date: Date) =>
-  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
-    date.getDate()
-  ).padStart(2, "0")}`;
 
 const isSameDate = (a: Date, b: Date) =>
   a.getFullYear() === b.getFullYear() &&
@@ -42,17 +41,36 @@ export default function MonthGrid({
   month,
   year,
   selectedDate,
-  events,
-  onSelect,
   today,
-  rangeStart,
-  rangeEnd,
+  hasEvents,
+  dragStart,
+  dragEnd,
   isDragging,
   onRangeStart,
   onRangeMove,
   onRangeEnd,
   onGridLeave,
+  onTouchStart,
+  onTouchMove,
+  onTouchEnd,
 }: MonthGridProps) {
+  const gridRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const el = gridRef.current;
+    if (!el) return;
+    const opts = { passive: false } as AddEventListenerOptions;
+    el.addEventListener("touchstart", onTouchStart, opts);
+    el.addEventListener("touchmove", onTouchMove, opts);
+    el.addEventListener("touchend", onTouchEnd, opts);
+
+    return () => {
+      el.removeEventListener("touchstart", onTouchStart, opts);
+      el.removeEventListener("touchmove", onTouchMove, opts);
+      el.removeEventListener("touchend", onTouchEnd, opts);
+    };
+  }, [onTouchStart, onTouchMove, onTouchEnd, isDragging, dragStart, dragEnd]);
+
   const firstOfMonth = new Date(year, month, 1);
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const daysInPrevMonth = new Date(year, month, 0).getDate();
@@ -86,26 +104,31 @@ export default function MonthGrid({
     };
   });
 
-  const eventKeys = new Set(events.map((event) => event.dateKey));
-  const bounds = getRangeBounds(rangeStart, rangeEnd);
+  const bounds = getRangeBounds(dragStart, dragEnd);
 
   return (
-    <div className="grid grid-cols-7 gap-3" onMouseLeave={onGridLeave}>
+    <div
+      ref={gridRef}
+      className="grid select-none touch-none grid-cols-7 gap-3"
+      onMouseLeave={onGridLeave}
+    >
       {dayEntries.map(({ date, day, isOverflow }) => {
         const isSelected = selectedDate !== null && isSameDate(selectedDate, date);
         const isToday = isSameDate(today, date);
-        const hasEvents = eventKeys.has(formatKey(date));
-        const inRange = isInRange(date, rangeStart, rangeEnd);
+        const hasEvent = !isOverflow && hasEvents(date);
+        const inRange = isInRange(date, dragStart, dragEnd);
         const isRangeStart = bounds ? isSameDate(bounds.lo, date) : false;
         const isRangeEnd = bounds ? isSameDate(bounds.hi, date) : false;
+        const dataDate = date.toISOString().slice(0, 10);
 
         return (
           <DayCell
             key={`${date.toISOString()}-${day}`}
             day={day}
+            dataDate={dataDate}
             isSelected={isSelected}
             isToday={isToday}
-            hasEvents={hasEvents}
+            hasEvents={hasEvent}
             isOverflow={isOverflow}
             isInRange={inRange}
             isRangeStart={isRangeStart}
@@ -114,8 +137,10 @@ export default function MonthGrid({
             onMouseEnter={() => {
               if (isDragging) onRangeMove(date);
             }}
-            onMouseUp={onRangeEnd}
-            onClick={() => onSelect(date)}
+            onMouseUp={() => onRangeEnd(date)}
+            onTouchStart={(e) => onTouchStart(e.nativeEvent)}
+            onTouchMove={(e) => onTouchMove(e.nativeEvent)}
+            onTouchEnd={(e) => onTouchEnd(e.nativeEvent)}
           />
         );
       })}

@@ -1,5 +1,8 @@
+import type { MouseEvent, TouchEvent } from "react";
+
 type DayCellProps = {
   day: number;
+  dataDate: string;
   isSelected: boolean;
   isToday: boolean;
   hasEvents: boolean;
@@ -10,11 +13,14 @@ type DayCellProps = {
   onMouseDown: () => void;
   onMouseEnter: () => void;
   onMouseUp: () => void;
-  onClick: () => void;
+  onTouchStart: (event: TouchEvent<HTMLButtonElement>) => void;
+  onTouchMove: (event: TouchEvent<HTMLButtonElement>) => void;
+  onTouchEnd: (event: TouchEvent<HTMLButtonElement>) => void;
 };
 
 export default function DayCell({
   day,
+  dataDate,
   isSelected,
   isToday,
   hasEvents,
@@ -25,46 +31,69 @@ export default function DayCell({
   onMouseDown,
   onMouseEnter,
   onMouseUp,
-  onClick,
+  onTouchStart,
+  onTouchMove,
+  onTouchEnd,
 }: DayCellProps) {
-  const baseText = isOverflow ? "text-[#D9C9BA]" : "text-[#5A3E2B]";
-  const rangeBg = isInRange || isRangeStart || isRangeEnd ? "bg-[rgba(232,168,56,0.25)]" : "";
-  const rangeRadius = isRangeStart
-    ? "rounded-l-full"
-    : isRangeEnd
-      ? "rounded-r-full"
-      : isInRange
-        ? "rounded-none"
-        : "rounded-full";
+  const isDisabled = isOverflow;
+  const baseText = isOverflow ? "text-[#c5b8ab]" : "text-[#2a1f14]";
+  const rangeFill = isRangeStart || isRangeEnd ? "bg-[rgba(200,121,65,0.28)]" : isInRange ? "bg-[rgba(200,121,65,0.18)]" : "";
+  const rangeRadius = isRangeStart && isRangeEnd
+    ? "rounded-full"
+    : isRangeStart
+      ? "rounded-l-full"
+      : isRangeEnd
+        ? "rounded-r-full"
+        : isInRange
+          ? "rounded-none"
+          : "rounded-full";
+  const hoverBg = !isDisabled && !isSelected && !isInRange && !isRangeStart && !isRangeEnd
+    ? "hover:bg-[rgba(90,74,58,0.08)]"
+    : "";
+
+  const numberBase = "flex h-9 w-9 items-center justify-center rounded-full text-[15px] font-medium";
+  const todayRing = isToday && !isSelected ? "border-[1.5px] border-[#8B6340]" : "";
+  const selectedStyle = isSelected ? "bg-[#3d2c1e] text-white" : "";
 
   return (
     <button
       type="button"
-      onMouseDown={onMouseDown}
-      onMouseEnter={onMouseEnter}
-      onMouseUp={onMouseUp}
-      onClick={onClick}
+      data-date={dataDate}
+      data-overflow={isOverflow ? "true" : undefined}
+      disabled={isDisabled}
+      onMouseDown={(e: MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        if (!isDisabled) onMouseDown();
+      }}
+      onMouseEnter={() => {
+        if (!isDisabled) onMouseEnter();
+      }}
+      onMouseUp={() => {
+        if (!isDisabled) onMouseUp();
+      }}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
       className={
-        "relative flex h-10 w-10 items-center justify-center transition " +
+        "relative flex h-10 w-10 flex-col items-center justify-center transition " +
         baseText +
         " " +
-        rangeBg +
+        rangeFill +
         " " +
-        rangeRadius
+        rangeRadius +
+        " " +
+        hoverBg +
+        " " +
+        (isDisabled ? "cursor-default" : "cursor-pointer") +
+        " touch-none [-webkit-tap-highlight-color:transparent]"
       }
     >
-      <span
-        className={
-          "flex h-10 w-10 items-center justify-center rounded-full " +
-          (isSelected ? "bg-[#6B3F2A] text-white" : "") +
-          (isToday ? " ring-2 ring-[#C69B7B]" : "")
-        }
-      >
+      <span className={`${numberBase} ${todayRing} ${selectedStyle}`}>
         {day}
       </span>
-      {hasEvents && !isSelected && (
-        <span className="absolute -bottom-1.5 left-1/2 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-[#C69B7B]" />
-      )}
+      {hasEvents ? (
+        <span className="mt-[3px] h-[5px] w-[5px] rounded-full bg-[#c87941]" />
+      ) : null}
     </button>
   );
 }

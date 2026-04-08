@@ -49,7 +49,7 @@ export default function DesertScene({
       <g clipPath={`url(#${clipId})`}>
         <rect width="520" height="360" fill={`url(#${gradientId})`} style={skyStyle} />
         <CloudGroup isExiting={isExiting} isEntering={isEntering} />
-        <SkySun onClick={onSunClick} skyColor={sunGlow} isExiting={isExiting} isEntering={isEntering} />
+        <SkySun skyColor={sunGlow} isExiting={isExiting} isEntering={isEntering} onClick={onSunClick} />
         <HillLayer season={season} isExiting={isExiting} isEntering={isEntering} />
         <TreeSet isExiting={isExiting} isEntering={isEntering} />
       </g>
