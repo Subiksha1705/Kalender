@@ -1,6 +1,6 @@
 type EventItemProps = {
   title: string;
-  time: string;
+  time?: string | null;
   color: string;
 };
 
@@ -14,7 +14,7 @@ export default function EventItem({ title, time, color }: EventItemProps) {
       />
       <div className="space-y-1">
         <div className="text-sm font-semibold text-[#5A3E2B]">{title}</div>
-        <div className="text-xs text-[#9C7F6A]">{time}</div>
+        {time ? <div className="text-xs text-[#9C7F6A]">{time}</div> : null}
       </div>
     </div>
   );

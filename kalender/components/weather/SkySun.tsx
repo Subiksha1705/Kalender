@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 
 type SkySunProps = {
-  onClick: () => void;
+  onClick?: () => void;
   skyColor: string;
   isExiting: boolean;
   isEntering: boolean;
@@ -24,16 +24,22 @@ function getStyle(isExiting: boolean, isEntering: boolean): CSSProperties | unde
 }
 
 export default function SkySun({ onClick, skyColor, isExiting, isEntering }: SkySunProps) {
+  const interactive = typeof onClick === "function";
+
   return (
     <g
-      onClick={onClick}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") onClick();
-      }}
-      role="button"
-      tabIndex={0}
-      className="cursor-pointer"
-      aria-label="Open calendar"
+      onClick={interactive ? onClick : undefined}
+      onKeyDown={
+        interactive
+          ? (e) => {
+              if (e.key === "Enter" || e.key === " ") onClick();
+            }
+          : undefined
+      }
+      role={interactive ? "button" : undefined}
+      tabIndex={interactive ? 0 : undefined}
+      className={interactive ? "cursor-pointer" : undefined}
+      aria-label={interactive ? "Open calendar" : undefined}
       style={getStyle(isExiting, isEntering)}
     >
       <circle cx="160" cy="175" r="60" fill={skyColor} opacity="0.30" />

@@ -10,7 +10,7 @@ type DesertSceneProps = {
   season: Season;
   isExiting: boolean;
   isEntering: boolean;
-  onSunClick: () => void;
+  onSunClick?: () => void;
 };
 
 export default function DesertScene({

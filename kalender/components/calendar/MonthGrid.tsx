@@ -1,4 +1,4 @@
-import type { CalendarEvent } from "@/lib/events";
+import type { CalendarEvent } from "@/hooks/useEvents";
 import DayCell from "./DayCell";
 
 type MonthGridProps = {
@@ -8,6 +8,13 @@ type MonthGridProps = {
   events: CalendarEvent[];
   onSelect: (date: Date) => void;
   today: Date;
+  rangeStart: Date | null;
+  rangeEnd: Date | null;
+  isDragging: boolean;
+  onRangeStart: (date: Date) => void;
+  onRangeMove: (date: Date) => void;
+  onRangeEnd: () => void;
+  onGridLeave: () => void;
 };
 
 const formatKey = (date: Date) =>
@@ -20,6 +27,17 @@ const isSameDate = (a: Date, b: Date) =>
   a.getMonth() === b.getMonth() &&
   a.getDate() === b.getDate();
 
+const getRangeBounds = (start: Date | null, end: Date | null) => {
+  if (!start || !end) return null;
+  return start <= end ? { lo: start, hi: end } : { lo: end, hi: start };
+};
+
+const isInRange = (date: Date, start: Date | null, end: Date | null) => {
+  const bounds = getRangeBounds(start, end);
+  if (!bounds) return false;
+  return date >= bounds.lo && date <= bounds.hi;
+};
+
 export default function MonthGrid({
   month,
   year,
@@ -27,6 +45,13 @@ export default function MonthGrid({
   events,
   onSelect,
   today,
+  rangeStart,
+  rangeEnd,
+  isDragging,
+  onRangeStart,
+  onRangeMove,
+  onRangeEnd,
+  onGridLeave,
 }: MonthGridProps) {
   const firstOfMonth = new Date(year, month, 1);
   const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -61,15 +86,18 @@ export default function MonthGrid({
     };
   });
 
-  const eventKeys = new Set(events.map((event) => event.date));
+  const eventKeys = new Set(events.map((event) => event.dateKey));
+  const bounds = getRangeBounds(rangeStart, rangeEnd);
 
   return (
-    <div className="grid grid-cols-7 gap-3">
+    <div className="grid grid-cols-7 gap-3" onMouseLeave={onGridLeave}>
       {dayEntries.map(({ date, day, isOverflow }) => {
-        const isSelected =
-          selectedDate !== null && isSameDate(selectedDate, date);
+        const isSelected = selectedDate !== null && isSameDate(selectedDate, date);
         const isToday = isSameDate(today, date);
         const hasEvents = eventKeys.has(formatKey(date));
+        const inRange = isInRange(date, rangeStart, rangeEnd);
+        const isRangeStart = bounds ? isSameDate(bounds.lo, date) : false;
+        const isRangeEnd = bounds ? isSameDate(bounds.hi, date) : false;
 
         return (
           <DayCell
@@ -79,6 +107,14 @@ export default function MonthGrid({
             isToday={isToday}
             hasEvents={hasEvents}
             isOverflow={isOverflow}
+            isInRange={inRange}
+            isRangeStart={isRangeStart}
+            isRangeEnd={isRangeEnd}
+            onMouseDown={() => onRangeStart(date)}
+            onMouseEnter={() => {
+              if (isDragging) onRangeMove(date);
+            }}
+            onMouseUp={onRangeEnd}
             onClick={() => onSelect(date)}
           />
         );

@@ -1,9 +1,10 @@
 type DayNavProps = {
   onPrev?: () => void;
   onNext?: () => void;
+  onLabelClick?: () => void;
 };
 
-export default function DayNav({ onPrev, onNext }: DayNavProps) {
+export default function DayNav({ onPrev, onNext, onLabelClick }: DayNavProps) {
   return (
     <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-[#9C7F6A]">
       <button
@@ -14,7 +15,12 @@ export default function DayNav({ onPrev, onNext }: DayNavProps) {
       >
         &#x2039;
       </button>
-      <span>Today</span>
+      <span
+        onClick={onLabelClick}
+        className={onLabelClick ? "cursor-pointer" : undefined}
+      >
+        Today
+      </span>
       <button
         type="button"
         onClick={onNext}

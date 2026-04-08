@@ -65,7 +65,12 @@ export function DateGrid({
   return (
     <div>
       <DayHeaders />
-      <div className="grid-container">
+      <div
+        className="grid-container"
+        onMouseLeave={() => {
+          if (range.isDragging) range.handleDayMouseUp();
+        }}
+      >
         {animating && direction ? (
           <>
             <div
