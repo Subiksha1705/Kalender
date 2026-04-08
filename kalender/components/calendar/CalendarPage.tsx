@@ -95,9 +95,11 @@ export default function CalendarPage() {
     if (cell.getAttribute("data-overflow") === "true") return null;
     const iso = cell.getAttribute("data-date");
     if (!iso) return null;
-    const d = new Date(iso);
-    d.setHours(0, 0, 0, 0);
-    return d;
+    const [y, m, d] = iso.split("-").map((v) => Number(v));
+    if (!y || !m || !d) return null;
+    const date = new Date(y, m - 1, d);
+    date.setHours(0, 0, 0, 0);
+    return date;
   };
 
   const handleTouchStart = (e: TouchEvent) => {

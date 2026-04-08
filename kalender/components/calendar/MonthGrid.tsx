@@ -122,7 +122,9 @@ export default function MonthGrid({
         const inRange = isInRange(date, dragStart, dragEnd);
         const isRangeStart = bounds ? isSameDate(bounds.lo, date) : false;
         const isRangeEnd = bounds ? isSameDate(bounds.hi, date) : false;
-        const dataDate = date.toISOString().slice(0, 10);
+        const dataDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
+          date.getDate()
+        ).padStart(2, "0")}`;
 
         return (
           <DayCell
