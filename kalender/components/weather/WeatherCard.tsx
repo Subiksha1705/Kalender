@@ -46,6 +46,13 @@ export default function WeatherCard({ season }: WeatherCardProps) {
     router.push("/calendar");
   };
 
+  const handleToday = () => {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    setSelectedDate(now);
+    setSelectedMonth(now);
+  };
+
   const goToPrevDay = () => {
     const next = new Date(selectedDate);
     next.setDate(next.getDate() - 1);
@@ -77,7 +84,23 @@ export default function WeatherCard({ season }: WeatherCardProps) {
   return (
     <section className="flex min-h-screen w-full flex-col bg-[#F5EFE6] px-6 py-10 md:px-12 lg:pr-0">
       <div className="mx-auto flex w-full max-w-none flex-1 flex-col gap-8">
-        <div className="flex w-full items-center justify-start">
+        <div className="flex w-full flex-wrap items-center justify-start gap-2">
+          <button
+            type="button"
+            onClick={handleToday}
+            className="rounded-full border border-[#cdbfb2] px-3 py-1 text-[10px] uppercase tracking-[0.18em] text-[#5a4a3a] opacity-80 transition hover:bg-[#efe6db] hover:opacity-100"
+            aria-label="Jump to today"
+          >
+            Today
+          </button>
+          <button
+            type="button"
+            onClick={handleNavigate}
+            className="rounded-full border border-[#cdbfb2] px-3 py-1 text-[10px] uppercase tracking-[0.18em] text-[#5a4a3a] opacity-80 transition hover:bg-[#efe6db] hover:opacity-100"
+            aria-label="Open calendar"
+          >
+            Calendar
+          </button>
         </div>
 
         <div className="grid flex-1 items-start gap-6 lg:grid-cols-[minmax(240px,1fr)_minmax(0,3fr)] lg:items-stretch lg:min-h-[70vh]">

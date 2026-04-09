@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useEvents } from "@/hooks/useEvents";
 import { useNotes } from "@/hooks/useNotes";
 import { formatDateKey } from "@/utils/calendar";
@@ -36,6 +37,7 @@ const isSameDate = (a: Date, b: Date) =>
   a.getDate() === b.getDate();
 
 export default function CalendarPage() {
+  const router = useRouter();
   const {
     getEvents,
     addEvent,
@@ -61,6 +63,8 @@ export default function CalendarPage() {
     const saved = localStorage.getItem("kalender-show-banner");
     return saved === null ? true : saved === "true";
   });
+  const isCurrentMonth =
+    month === today.getMonth() && year === today.getFullYear();
 
   useEffect(() => {
     localStorage.setItem("kalender-show-banner", String(showBanner));
@@ -85,6 +89,31 @@ export default function CalendarPage() {
       return prev + 1;
     });
   };
+
+  const handleToday = () => {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    setMonth(now.getMonth());
+    setYear(now.getFullYear());
+    if (selectedDate && !isSameDate(selectedDate, now)) {
+      setSelectedDate(null);
+      setPanelState("hidden");
+      return;
+    }
+    if (selectedDate) {
+      setSelectedDate(now);
+      setPanelState("open");
+    }
+  };
+
+  useEffect(() => {
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === "ArrowLeft") handlePrev();
+      if (event.key === "ArrowRight") handleNext();
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [handlePrev, handleNext]);
 
   const handleRangeStart = (date: Date) => {
     setDragStart(date);
@@ -219,89 +248,140 @@ export default function CalendarPage() {
   const showPanel = panelState !== "hidden";
 
   return (
-    <section
-      className={`grid h-full min-h-full gap-8 bg-[#EDE8DC] transition-all duration-300 lg:items-stretch ${
-        showPanel ? "lg:grid-cols-[1.4fr_0.85fr]" : "lg:grid-cols-1"
-      }`}
-    >
-      <div className="flex h-full flex-col gap-6 rounded-[20px] bg-[#F5EFE6] p-6 md:p-8">
-        <CalendarHeader
-          monthIndex={month}
-          year={year}
-          onPrev={handlePrev}
-          onNext={handleNext}
-          onSelectMonth={setMonth}
-          onSelectYear={setYear}
-          showBanner={showBanner}
-          onToggleBanner={() => setShowBanner((prev) => !prev)}
-        />
-        <div className="flex flex-1 flex-col gap-4">
-          {showBanner ? (
-            <CalendarBanner
-              monthIndex={month}
-              monthName={monthNames[month]}
-              year={year}
-            />
-          ) : null}
-          <WeekdayRow />
-          <MonthGrid
-            month={month}
+    <>
+      <button
+        type="button"
+        onClick={handlePrev}
+        aria-label="Previous month"
+        className="hidden md:flex fixed left-0 top-1/2 -translate-y-1/2 h-32 w-10 items-center justify-center rounded-r-xl text-neutral-400 transition-all duration-150 hover:bg-neutral-100/60 hover:text-neutral-700 z-10"
+      >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <polyline points="15 18 9 12 15 6" />
+        </svg>
+      </button>
+      <button
+        type="button"
+        onClick={handleNext}
+        aria-label="Next month"
+        className="hidden md:flex fixed right-0 top-1/2 -translate-y-1/2 h-32 w-10 items-center justify-center rounded-l-xl text-neutral-400 transition-all duration-150 hover:bg-neutral-100/60 hover:text-neutral-700 z-10"
+      >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <polyline points="9 18 15 12 9 6" />
+        </svg>
+      </button>
+      <section
+        className={`grid h-full min-h-full gap-8 bg-[#EDE8DC] transition-all duration-300 lg:items-stretch ${
+          showPanel ? "lg:grid-cols-[1.4fr_0.85fr]" : "lg:grid-cols-1"
+        }`}
+      >
+        <div className="flex h-full flex-col gap-6 rounded-[20px] bg-[#F5EFE6] p-6 md:p-8">
+          <button
+            type="button"
+            onClick={() => router.push("/weather")}
+            className="md:hidden inline-flex w-fit items-center gap-2 text-[12px] uppercase tracking-[0.18em] text-[#5a4a3a] opacity-80 transition-opacity hover:opacity-100"
+            aria-label="Back to weather"
+          >
+            <span className="text-base leading-none">&#x2039;</span>
+            Weather
+          </button>
+          <CalendarHeader
+            monthIndex={month}
             year={year}
-            selectedDate={selectedDate}
-            today={today}
-            hasEvents={hasEvents}
-            hasNotes={hasNotes}
-            dragStart={dragStart}
-            dragEnd={dragEnd}
-            isDragging={isDragging}
-            onRangeStart={handleRangeStart}
-            onRangeMove={handleRangeMove}
-            onRangeEnd={handleRangeEnd}
-            onGridLeave={() => setIsDragging(false)}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
+            onPrev={handlePrev}
+            onNext={handleNext}
+            onToday={handleToday}
+            isCurrentMonth={isCurrentMonth}
+            onSelectMonth={setMonth}
+            onSelectYear={setYear}
+            showBanner={showBanner}
+            onToggleBanner={() => setShowBanner((prev) => !prev)}
           />
+          <div className="flex flex-1 flex-col gap-4">
+            {showBanner ? (
+              <CalendarBanner
+                monthIndex={month}
+                monthName={monthNames[month]}
+                year={year}
+              />
+            ) : null}
+            <WeekdayRow />
+            <MonthGrid
+              month={month}
+              year={year}
+              selectedDate={selectedDate}
+              today={today}
+              hasEvents={hasEvents}
+              hasNotes={hasNotes}
+              dragStart={dragStart}
+              dragEnd={dragEnd}
+              isDragging={isDragging}
+              onRangeStart={handleRangeStart}
+              onRangeMove={handleRangeMove}
+              onRangeEnd={handleRangeEnd}
+              onGridLeave={() => setIsDragging(false)}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+            />
+          </div>
         </div>
-      </div>
-      {showPanel ? (
-        <div className={panelState === "closing" ? "event-panel-exit" : "event-panel-enter"}>
-          <EventPanel
-            selectedDate={selectedDate}
-            onPrevDay={handlePrevDay}
-            onNextDay={handleNextDay}
-            events={eventsForSelected}
-            notes={notesForSelected}
-            onAdd={addEvent}
-            onRemove={removeEvent}
-            onRemoveGroup={removeEventGroup}
-            onUpdate={updateEvent}
-            onUpdateGroup={updateEventGroup}
-            onAddNote={(date, title, description) => {
-              notesStore.addNote(formatDateKey(date), title, description, []);
-            }}
-            onDeleteNote={notesStore.deleteNote}
-            onDeleteNoteGroup={notesStore.deleteNoteGroup}
-            onUpdateNote={notesStore.updateNote}
-            onUpdateNoteGroup={notesStore.updateNoteGroup}
-          />
-        </div>
-      ) : null}
+        {showPanel ? (
+          <div className={panelState === "closing" ? "event-panel-exit" : "event-panel-enter"}>
+            <EventPanel
+              selectedDate={selectedDate}
+              onPrevDay={handlePrevDay}
+              onNextDay={handleNextDay}
+              events={eventsForSelected}
+              notes={notesForSelected}
+              onAdd={addEvent}
+              onRemove={removeEvent}
+              onRemoveGroup={removeEventGroup}
+              onUpdate={updateEvent}
+              onUpdateGroup={updateEventGroup}
+              onAddNote={(date, title, description) => {
+                notesStore.addNote(formatDateKey(date), title, description, []);
+              }}
+              onDeleteNote={notesStore.deleteNote}
+              onDeleteNoteGroup={notesStore.deleteNoteGroup}
+              onUpdateNote={notesStore.updateNote}
+              onUpdateNoteGroup={notesStore.updateNoteGroup}
+            />
+          </div>
+        ) : null}
 
-      {rangeModal ? (
-        <RangeEventModal
-          range={rangeModal}
-          onSaveEvent={(title, time, color) => {
-            addEventRange(rangeModal.start, rangeModal.end, title, time, color);
-            setRangeModal(null);
-          }}
-          onSaveNote={(title, description) => {
-            notesStore.addNoteRange(rangeModal.start, rangeModal.end, title, description, []);
-            setRangeModal(null);
-          }}
-          onClose={() => setRangeModal(null)}
-        />
-      ) : null}
-    </section>
+        {rangeModal ? (
+          <RangeEventModal
+            range={rangeModal}
+            onSaveEvent={(title, time, color) => {
+              addEventRange(rangeModal.start, rangeModal.end, title, time, color);
+              setRangeModal(null);
+            }}
+            onSaveNote={(title, description) => {
+              notesStore.addNoteRange(rangeModal.start, rangeModal.end, title, description, []);
+              setRangeModal(null);
+            }}
+            onClose={() => setRangeModal(null)}
+          />
+        ) : null}
+      </section>
+    </>
   );
 }

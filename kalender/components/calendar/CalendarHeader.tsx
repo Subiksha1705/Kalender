@@ -22,6 +22,8 @@ type CalendarHeaderProps = {
   year: number;
   onPrev: () => void;
   onNext: () => void;
+  onToday: () => void;
+  isCurrentMonth: boolean;
   onSelectMonth: (month: number) => void;
   onSelectYear: (year: number) => void;
   showBanner: boolean;
@@ -33,6 +35,8 @@ export default function CalendarHeader({
   year,
   onPrev,
   onNext,
+  onToday,
+  isCurrentMonth,
   onSelectMonth,
   onSelectYear,
   showBanner,
@@ -85,8 +89,8 @@ export default function CalendarHeader({
   }, [openYear, years, year]);
 
   return (
-    <div className="flex items-center justify-between gap-3">
-      <div className="flex items-center gap-2 text-[15px] font-medium uppercase tracking-[0.12em] text-[#1a1208]">
+    <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-wrap items-center gap-2 text-[13px] font-medium uppercase tracking-[0.12em] text-[#1a1208] sm:text-[15px]">
         <button
           type="button"
           onClick={onPrev}
@@ -142,7 +146,20 @@ export default function CalendarHeader({
           &#x203A;
         </button>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+        <button
+          type="button"
+          onClick={onToday}
+          disabled={isCurrentMonth}
+          className={`rounded-full border border-[#c5b8ab] px-3 py-1 text-[10px] uppercase tracking-[0.18em] transition ${
+            isCurrentMonth
+              ? "cursor-default opacity-50"
+              : "cursor-pointer opacity-70 hover:bg-[#efe6db] hover:opacity-100"
+          }`}
+          aria-label="Jump to current month"
+        >
+          Today
+        </button>
         <div className="relative" ref={yearRef}>
           <button
             type="button"
