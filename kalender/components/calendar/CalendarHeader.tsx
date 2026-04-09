@@ -24,6 +24,8 @@ type CalendarHeaderProps = {
   onNext: () => void;
   onSelectMonth: (month: number) => void;
   onSelectYear: (year: number) => void;
+  showBanner: boolean;
+  onToggleBanner: () => void;
 };
 
 export default function CalendarHeader({
@@ -33,6 +35,8 @@ export default function CalendarHeader({
   onNext,
   onSelectMonth,
   onSelectYear,
+  showBanner,
+  onToggleBanner,
 }: CalendarHeaderProps) {
   const [openMonth, setOpenMonth] = useState(false);
   const [openYear, setOpenYear] = useState(false);
@@ -81,7 +85,7 @@ export default function CalendarHeader({
   }, [openYear, years, year]);
 
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between gap-3">
       <div className="flex items-center gap-2 text-[15px] font-medium uppercase tracking-[0.12em] text-[#1a1208]">
         <button
           type="button"
@@ -138,43 +142,85 @@ export default function CalendarHeader({
           &#x203A;
         </button>
       </div>
-      <div className="relative" ref={yearRef}>
+      <div className="flex items-center gap-2">
+        <div className="relative" ref={yearRef}>
+          <button
+            type="button"
+            onClick={() => {
+              setOpenMonth(false);
+              setOpenYear((value) => !value);
+            }}
+            className="inline-flex items-center gap-2 cursor-pointer text-[15px] tracking-[0.08em] text-[#5a4a3a]"
+            aria-label="Select year"
+          >
+            {year}
+            <span className={`text-[12px] transition ${openYear ? "rotate-180" : ""}`}>▾</span>
+          </button>
+          {openYear ? (
+            <div className="absolute right-0 top-full z-40 mt-2 w-[160px] max-h-[280px] overflow-y-auto rounded-[16px] border border-[#c5b8ab] bg-[#f9f3ea] p-2 shadow-[0_12px_30px_rgba(0,0,0,0.18)]">
+              <div className="flex flex-col gap-1">
+                {years.map((y) => (
+                  <button
+                    key={y}
+                    ref={(el) => {
+                      yearItemRefs.current[years.indexOf(y)] = el;
+                    }}
+                    type="button"
+                    onClick={() => {
+                      onSelectYear(y);
+                      setOpenYear(false);
+                    }}
+                    className={`rounded-[10px] px-3 py-2 text-left text-[12px] tracking-[0.1em] ${
+                      y === year ? "bg-[#3d2c1e] text-white" : "text-[#5a4a3a] hover:bg-[#efe6db]"
+                    }`}
+                  >
+                    {y}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : null}
+        </div>
         <button
           type="button"
-          onClick={() => {
-            setOpenMonth(false);
-            setOpenYear((value) => !value);
-          }}
-          className="inline-flex items-center gap-2 cursor-pointer text-[15px] tracking-[0.08em] text-[#5a4a3a]"
-          aria-label="Select year"
+          onClick={onToggleBanner}
+          title={showBanner ? "Hide banner" : "Show banner"}
+          className="ml-1 inline-flex h-7 w-7 items-center justify-center rounded-full text-[#5a4a3a] opacity-60 transition-opacity hover:opacity-100"
+          aria-label="Toggle month image banner"
         >
-          {year}
-          <span className={`text-[12px] transition ${openYear ? "rotate-180" : ""}`}>▾</span>
+          {showBanner ? (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <polyline points="21 15 16 10 5 21" />
+            </svg>
+          ) : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="2" y1="2" x2="22" y2="22" />
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+            </svg>
+          )}
         </button>
-        {openYear ? (
-          <div className="absolute right-0 top-full z-40 mt-2 w-[160px] max-h-[280px] overflow-y-auto rounded-[16px] border border-[#c5b8ab] bg-[#f9f3ea] p-2 shadow-[0_12px_30px_rgba(0,0,0,0.18)]">
-            <div className="flex flex-col gap-1">
-              {years.map((y) => (
-                <button
-                  key={y}
-                  ref={(el) => {
-                    yearItemRefs.current[years.indexOf(y)] = el;
-                  }}
-                  type="button"
-                  onClick={() => {
-                    onSelectYear(y);
-                    setOpenYear(false);
-                  }}
-                  className={`rounded-[10px] px-3 py-2 text-left text-[12px] tracking-[0.1em] ${
-                    y === year ? "bg-[#3d2c1e] text-white" : "text-[#5a4a3a] hover:bg-[#efe6db]"
-                  }`}
-                >
-                  {y}
-                </button>
-              ))}
-            </div>
-          </div>
-        ) : null}
       </div>
     </div>
   );

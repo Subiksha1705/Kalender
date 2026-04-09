@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useEvents } from "@/hooks/useEvents";
 import { useNotes } from "@/hooks/useNotes";
 import { formatDateKey } from "@/utils/calendar";
+import CalendarBanner from "@/components/CalendarBanner";
 import CalendarHeader from "./CalendarHeader";
 import EventPanel from "./EventPanel";
 import MonthGrid from "./MonthGrid";
@@ -11,6 +12,20 @@ import WeekdayRow from "./WeekdayRow";
 import { RangeEventModal } from "@/components/RangeEventModal";
 
 const today = new Date();
+const monthNames = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
 
 type Range = { start: Date; end: Date };
 type PanelState = "hidden" | "open" | "closing";
@@ -41,6 +56,15 @@ export default function CalendarPage() {
   const [rangeModal, setRangeModal] = useState<Range | null>(null);
   const [panelState, setPanelState] = useState<PanelState>("hidden");
   const closeTimerRef = useRef<number | null>(null);
+  const [showBanner, setShowBanner] = useState<boolean>(() => {
+    if (typeof window === "undefined") return true;
+    const saved = localStorage.getItem("kalender-show-banner");
+    return saved === null ? true : saved === "true";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("kalender-show-banner", String(showBanner));
+  }, [showBanner]);
 
   const handlePrev = () => {
     setMonth((prev) => {
@@ -208,19 +232,28 @@ export default function CalendarPage() {
           onNext={handleNext}
           onSelectMonth={setMonth}
           onSelectYear={setYear}
+          showBanner={showBanner}
+          onToggleBanner={() => setShowBanner((prev) => !prev)}
         />
         <div className="flex flex-1 flex-col gap-4">
+          {showBanner ? (
+            <CalendarBanner
+              monthIndex={month}
+              monthName={monthNames[month]}
+              year={year}
+            />
+          ) : null}
           <WeekdayRow />
-        <MonthGrid
-          month={month}
-          year={year}
-          selectedDate={selectedDate}
-          today={today}
-          hasEvents={hasEvents}
-          hasNotes={hasNotes}
-          dragStart={dragStart}
-          dragEnd={dragEnd}
-          isDragging={isDragging}
+          <MonthGrid
+            month={month}
+            year={year}
+            selectedDate={selectedDate}
+            today={today}
+            hasEvents={hasEvents}
+            hasNotes={hasNotes}
+            dragStart={dragStart}
+            dragEnd={dragEnd}
+            isDragging={isDragging}
             onRangeStart={handleRangeStart}
             onRangeMove={handleRangeMove}
             onRangeEnd={handleRangeEnd}
