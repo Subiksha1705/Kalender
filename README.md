@@ -1,4 +1,4 @@
-# Kalender(calender in german)
+# Kalender(Calender in german)
 
 A polished, interactive wall-calendar web app built with Next.js. Inspired by the aesthetic of a physical wall calendar — a seasonal hero image anchors each month above a clean date grid, with full event and note management built in.
 
