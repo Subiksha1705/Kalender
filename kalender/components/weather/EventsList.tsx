@@ -122,14 +122,14 @@ export default function EventsList({ selectedDate }: EventsListProps) {
                         <button
                           type="button"
                           onClick={() => saveEditSingle(event)}
-                          className="rounded-full border border-[#C9A98A] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#5A3E2B]"
+                          className="rounded-full border border-[#C9A98A] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#5A3E2B]"
                         >
                           Save this day
                         </button>
                         <button
                           type="button"
                           onClick={() => saveEditAll(event)}
-                          className="rounded-full bg-[#3d2c1e] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-white"
+                          className="rounded-full bg-[#3d2c1e] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-white"
                         >
                           Save all days
                         </button>
