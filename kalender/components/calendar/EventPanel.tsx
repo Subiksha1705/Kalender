@@ -7,6 +7,8 @@ import ConfirmDeleteModal from "@/components/ConfirmDeleteModal";
 
 type EventPanelProps = {
   selectedDate: Date | null;
+  onPrevDay?: () => void;
+  onNextDay?: () => void;
   events: CalendarEvent[];
   notes: Note[];
   onAdd: (date: Date, title: string, time: string, color?: string) => void;
@@ -42,11 +44,22 @@ const monthNames = [
   "November",
   "December",
 ];
+const weekdayNames = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
 
 const COLORS = ["#c87941", "#e8a838", "#4a9b6f", "#4a7fb5"];
 
 export default function EventPanel({
   selectedDate,
+  onPrevDay,
+  onNextDay,
   events,
   notes,
   onAdd,
@@ -171,8 +184,29 @@ export default function EventPanel({
     <>
       <aside className="flex h-full flex-col gap-6 rounded-[20px] bg-[#F5EFE6] p-8">
       <div>
-        <div className="text-[64px] font-bold leading-none text-[#1a1208]">
-          {selectedDate.getDate()}
+        <div className="text-[13px] font-semibold uppercase tracking-[0.2em] text-[#9a8a7a]">
+          {weekdayNames[selectedDate.getDay()]}
+        </div>
+        <div className="mt-2 flex items-center gap-4">
+          <button
+            type="button"
+            onClick={onPrevDay}
+            className="rounded-full border border-[#E6D9CB] px-2 py-1 text-xs text-[#5A3E2B] transition hover:border-[#C9A98A]"
+            aria-label="Previous day"
+          >
+            &#x2039;
+          </button>
+          <div className="text-[64px] font-bold leading-none text-[#1a1208]">
+            {selectedDate.getDate()}
+          </div>
+          <button
+            type="button"
+            onClick={onNextDay}
+            className="rounded-full border border-[#E6D9CB] px-2 py-1 text-xs text-[#5A3E2B] transition hover:border-[#C9A98A]"
+            aria-label="Next day"
+          >
+            &#x203A;
+          </button>
         </div>
         <div className="mt-1 text-[13px] uppercase tracking-[0.15em] text-[#9a8a7a]">
           {monthNames[selectedDate.getMonth()].toUpperCase()}
@@ -193,16 +227,23 @@ export default function EventPanel({
               <div className="flex-1">
                 {editingId === event.id ? (
                   <div className="flex flex-col gap-2">
+                    <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#9a8a7a]">
+                      Event name
+                    </span>
                     <input
                       value={editingTitle}
                       onChange={(e) => setEditingTitle(e.target.value)}
                       className="w-full border-0 border-b border-[#ccc] bg-transparent px-0 py-1 text-[14px] text-[#1a1208] focus:outline-none"
                     />
+                    <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#9a8a7a]">
+                      Event time
+                    </span>
                     <input
-                      type="time"
+                      type="text"
                       value={editingTime}
                       onChange={(e) => setEditingTime(e.target.value)}
                       className="w-full border-0 border-b border-[#ccc] bg-transparent px-0 py-1 text-[14px] text-[#1a1208] focus:outline-none"
+                      placeholder="Event time"
                     />
                     <div className="flex items-center gap-2">
                       {COLORS.map((c) => (

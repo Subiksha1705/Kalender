@@ -153,6 +153,28 @@ export default function CalendarPage() {
       return;
     }
     setSelectedDate(date);
+    setMonth(date.getMonth());
+    setYear(date.getFullYear());
+    setPanelState("open");
+  };
+
+  const handlePrevDay = () => {
+    if (!selectedDate) return;
+    const next = new Date(selectedDate);
+    next.setDate(next.getDate() - 1);
+    setSelectedDate(next);
+    setMonth(next.getMonth());
+    setYear(next.getFullYear());
+    setPanelState("open");
+  };
+
+  const handleNextDay = () => {
+    if (!selectedDate) return;
+    const next = new Date(selectedDate);
+    next.setDate(next.getDate() + 1);
+    setSelectedDate(next);
+    setMonth(next.getMonth());
+    setYear(next.getFullYear());
     setPanelState("open");
   };
 
@@ -213,6 +235,8 @@ export default function CalendarPage() {
         <div className={panelState === "closing" ? "event-panel-exit" : "event-panel-enter"}>
           <EventPanel
             selectedDate={selectedDate}
+            onPrevDay={handlePrevDay}
+            onNextDay={handleNextDay}
             events={eventsForSelected}
             notes={notesForSelected}
             onAdd={addEvent}

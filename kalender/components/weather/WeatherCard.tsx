@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import DateBlock from "./DateBlock";
-import DayNav from "./DayNav";
 import DesertScene from "./DesertScene";
 import EventsList from "./EventsList";
 import NotesList from "./NotesList";
@@ -78,32 +77,18 @@ export default function WeatherCard({ season }: WeatherCardProps) {
   return (
     <section className="flex min-h-screen w-full flex-col bg-[#F5EFE6] px-6 py-10 md:px-12 lg:pr-0">
       <div className="mx-auto flex w-full max-w-none flex-1 flex-col gap-8">
-        <div className="grid w-full grid-cols-[1fr_auto] items-center gap-4 lg:grid-cols-[minmax(240px,1fr)_minmax(0,3fr)]">
-          <div className="flex items-center justify-start">
-            <DayNav onPrev={goToPrevDay} onNext={goToNextDay} />
-          </div>
-          <div className="flex items-center justify-end lg:justify-start">
-            <MonthNav
-              month={monthLabel}
-              onPrev={goToPrevMonth}
-              onNext={goToNextMonth}
-              onLabelClick={handleNavigate}
-            />
-          </div>
+        <div className="flex w-full items-center justify-start">
         </div>
 
         <div className="grid flex-1 items-start gap-6 lg:grid-cols-[minmax(240px,1fr)_minmax(0,3fr)] lg:items-stretch lg:min-h-[70vh]">
           <div className="flex flex-col gap-10">
             <div className={isEntering ? "anim-in-date" : ""}>
-              <button
-                type="button"
-                onClick={handleNavigate}
-                className="text-left cursor-pointer"
-                aria-label="Open calendar"
-                title="Open calendar"
-              >
-                <DateBlock date={selectedDate} />
-              </button>
+              <DateBlock
+                date={selectedDate}
+                onPrev={goToPrevDay}
+                onNext={goToNextDay}
+                onOpen={handleNavigate}
+              />
             </div>
             <div className={isEntering ? "anim-in-events" : ""}>
               <EventsList selectedDate={selectedDate} />
@@ -114,7 +99,14 @@ export default function WeatherCard({ season }: WeatherCardProps) {
           </div>
 
           <div className="relative">
-            <div className="relative ml-auto aspect-[13/9] w-full overflow-hidden rounded-[28px] lg:aspect-auto lg:h-full lg:w-full lg:rounded-l-[40px] lg:rounded-r-none">
+            
+            <div className="relative ml-auto aspect-[13/9] w-[96%] overflow-hidden rounded-[28px] md:w-[94%] lg:aspect-auto lg:h-[92%] lg:w-[92%] lg:self-center lg:rounded-l-[40px] lg:rounded-r-none">
+            <MonthNav
+            month={monthLabel}
+            onPrev={goToPrevMonth}
+            onNext={goToNextMonth}
+            onLabelClick={handleNavigate}
+          />
               <DesertScene season={season} isExiting={false} isEntering={isEntering} />
             </div>
           </div>
