@@ -90,16 +90,23 @@ export default function EventsList({ selectedDate }: EventsListProps) {
             <div className="flex-1">
               {editingId === event.id ? (
                 <div className="flex flex-col gap-2">
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#9C7F6A]">
+                    Event name
+                  </span>
                   <input
                     value={editingTitle}
                     onChange={(e) => setEditingTitle(e.target.value)}
                     className="w-full rounded-lg border border-[#E6D9CB] bg-white px-3 py-1.5 text-sm text-[#5A3E2B] outline-none focus:border-[#C9A98A]"
                   />
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#9C7F6A]">
+                    Event time
+                  </span>
                   <input
-                    type="time"
+                    type="text"
                     value={editingTime}
                     onChange={(e) => setEditingTime(e.target.value)}
                     className="w-full rounded-lg border border-[#E6D9CB] bg-white px-3 py-1.5 text-sm text-[#5A3E2B] outline-none focus:border-[#C9A98A]"
+                    placeholder="Event time"
                   />
                   <div className="flex items-center gap-2">
                     {COLORS.map((c) => (
