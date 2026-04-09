@@ -11,7 +11,7 @@ A polished, interactive wall-calendar web app built with Next.js. Inspired by th
 ### Core
 - **Wall Calendar Aesthetic** — Each month is paired with a curated seasonal hero image that sets the visual tone for the grid below
 - **Two Views** — Switch between a full **Calendar** view and a focused **Day** view (Today page)
-- **Day Range Selection** — Click and drag across dates to select a range; the start, end, and in-between days each have distinct visual states
+- **Day Range Selection** — Click and drag across dates or in smaller screen's (example: Mobile phones or ipad's or tablets hold and drag) to select a range; the start, end, and in-between days each have distinct visual states
 - **Event Creation** — Add named events to a selected date range, with time and color label options
 - **Notes** — Attach free-form notes to specific days alongside events
 - **Month & Year Navigation** — Navigate via arrow buttons or jump directly using the month/year dropdown selectors
